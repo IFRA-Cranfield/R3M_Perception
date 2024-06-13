@@ -3,7 +3,7 @@
 # R3M Project - Cranfield University
 # ROS2.0 TEMPLATES - Action Server
 import os
-MP_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'installation', 'megapose6d', 'src')
+MP_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception_setup', 'megapose6d', 'src')
 # Import libraries:
 from r3m_perception.msg import Trans
 

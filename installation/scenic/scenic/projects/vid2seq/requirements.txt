@@ -1,6 +1,0 @@
-dmvr @ git+https://github.com/deepmind/dmvr.git
-gin-config
-t5
-t5x
-six
-flax==0.5

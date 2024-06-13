@@ -1,2 +1,0 @@
-pycocotools
-ott-jax>=0.2.0

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import sys
 import os
-BV_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'installation', 'big_vision')
-OS_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'installation', 'scenic')
+BV_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception_setup', 'big_vision')
+OS_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception_setup', 'scenic')
 sys.path.append(BV_PATH)
 sys.path.append(OS_PATH)
 
