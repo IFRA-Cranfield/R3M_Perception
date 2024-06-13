@@ -1,4 +1,4 @@
-# Copyright 2023 The Scenic Authors.
+# Copyright 2024 The Scenic Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -148,7 +148,6 @@ def maybe_pad_batch(batch: Dict[str, PyTree],
     raise ValueError('In this codebase, we assumed that we always drop the '
                      'last partial batch of the train set. Please use '
                      '` drop_remainder=True` for the training set.')
-
   # Most batches will not need padding, so we quickly return to avoid slowdown.
   if train or batch_pad == 0:
     if 'batch_mask' not in batch:
@@ -194,26 +193,34 @@ def shard(pytree, n_devices=None):
   return jax.tree_util.tree_map(_shard_array, pytree)
 
 
-def shard_jit(data: PyTree, global_devices: np.ndarray) -> PyTree:
+def shard_jit(
+    data: PyTree,
+    global_devices: np.ndarray,
+    mesh_axis: tuple[str, ...] = ('devices',),
+) -> PyTree:
   """Shards data for use in jit-based pipelines.
 
   Note that the order of global devices for sharding data is important and
   should be compatible with device order used in the rest of the trainer for
   models params, state, etc.
 
+  Based on:
+  https://github.com/google-research/big_vision/blob/main/big_vision/input_pipeline.py.
 
   Args:
     data: PyTree of data
     global_devices: List of global devices to shard over.
+    mesh_axis: Specifies axis separately.
 
   Returns:
     Sharded data.
   """
 
   def _shard_array(x):
-    mesh = jax.sharding.Mesh(global_devices, ('devices',))
+    mesh = jax.sharding.Mesh(global_devices, mesh_axis)
     sharding = jax.sharding.NamedSharding(
-        mesh, jax.sharding.PartitionSpec('devices'))
+        mesh, jax.sharding.PartitionSpec(mesh_axis)
+    )
     local_ds = mesh.local_devices
 
     x = np.asarray(memoryview(x))  # No-copy: http://shortn/_KM5whIEtWI
@@ -230,6 +237,8 @@ def prefetch_iterator(it, n):
 
   Runs iterator `it` ahead for `n` steps.
 
+  Adapted from big_vision:
+  https://github.com/google-research/big_vision/blob/main/big_vision/input_pipeline.py.
 
   Args:
     it: Iterator

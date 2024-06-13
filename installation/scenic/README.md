@@ -66,9 +66,14 @@ Projects that were developed in Scenic or used it for their experiments:
 * [How can objects help action recognition?](https://openaccess.thecvf.com/content/CVPR2023/html/Zhou_How_Can_Objects_Help_Action_Recognition_CVPR_2023_paper.html)
 * [Verbs in Action: Improving verb understanding in video-language models](https://arxiv.org/abs/2304.06708)
 * [Unified Visual Relationship Detection with Vision and Language Models](https://arxiv.org/abs/2303.08998)
+* [UnLoc: A Unified Framework for Video Localization Tasks](https://arxiv.org/abs/2308.11062)
 * [REVEAL: Retrieval-Augmented Visual-Language Pre-Training with Multi-Source Multimodal Knowledge Memory](https://arxiv.org/abs/2212.05221)
 * [Audiovisual Masked Autoencoders](https://arxiv.org/abs/2212.05922)
 * [MatFormer: Nested Transformer for Elastic Inference](https://arxiv.org/abs/2310.07707)
+* [Pixel Aligned Language Models](https://arxiv.org/abs/2312.09237)
+* [A Generative Approach for Wikipedia-Scale Visual Entity Recognition](https://arxiv.org/abs/2403.02041)
+* [Streaming Dense Video Captioning](https://arxiv.org/abs/2404.01297)
+* [Dense Video Object Captioning from Disjoint Supervision](https://arxiv.org/abs/2306.11729)
 
 More information can be found in [projects](https://github.com/google-research/scenic/tree/main/scenic/projects#list-of-projects-hosted-in-scenic).
 
@@ -88,6 +93,9 @@ Baselines that were reproduced in Scenic:
 * [Universal Transformers](https://arxiv.org/abs/1807.03819)
 * [PonderNet](https://arxiv.org/abs/2107.05407)
 * [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377)
+* [Rethinking Attention with Performers](https://arxiv.org/abs/2009.14794)
+* [(CenterNet) Objects as Points](https://arxiv.org/abs/1904.07850)
+* [(SAM) Segment Anything](https://arxiv.org/abs/2304.02643)
 
 
 More information can be found in [baseline models](https://github.com/google-research/scenic/tree/main/scenic/projects/baselines#scenic-baseline-models).

@@ -1,4 +1,4 @@
-# Copyright 2022 Big Vision Authors.
+# Copyright 2024 Big Vision Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 if [ ! -d "bv_venv" ]
 then
   sudo apt-get update
-  sudo apt install -y python3.8-venv
+  sudo apt install -y python3-venv
   python3 -m venv bv_venv
   . bv_venv/bin/activate
 
   pip install -U pip  # Yes, really needed.
   # NOTE: doesn't work when in requirements.txt -> cyclic dep
-  pip install "jax[tpu]>=0.2.16" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
+  pip install "jax[tpu]>=0.4.25" -f https://storage.googleapis.com/jax-releases/libtpu_releases.html
   pip install -r big_vision/requirements.txt
 else
   . bv_venv/bin/activate
@@ -31,5 +31,5 @@ fi
 
 if [ $# -ne 0 ]
 then
-  env TFDS_DATA_DIR=$TFDS_DATA_DIR python3 -m "$@"
+  env TFDS_DATA_DIR=$TFDS_DATA_DIR BV_JAX_INIT=1 python3 -m "$@"
 fi

@@ -1,4 +1,4 @@
-# Copyright 2023 The Scenic Authors.
+# Copyright 2024 The Scenic Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ def convert_and_save_model(
     enable_xla: bool = True,
     compile_model: bool = True,
     saved_model_options: Optional[tf.saved_model.SaveOptions] = None,
-    native_serialization: Optional[str | bool] = "default"
-):
+    native_serialization: Optional[str | bool] = "default",
+    native_serialization_platforms: Sequence[str] | None = ("cpu", "tpu")):
   """Converts a JAX function and saves a SavedModel.
 
   We assume that the JAX model consists of a prediction function and trained
@@ -101,6 +101,11 @@ def convert_and_save_model(
       confidence that the code executed when calling this function from
       TensorFlow is exactly the same as JAX would run natively. See
       jax2tf.convert() for details.
+    native_serialization_platforms: When the "native_serialization" flag is
+      used, the platforms that it will be serialised to. Must be a tuple of
+      strings, including a subset of: ['cpu', 'cuda', 'rocm', 'tpu'].
+      'None', specifies the JAX default backend on the machine where the
+      lowering is done.
 
   Raises:
     ValueError: If at least one input signature is not defined. However, if
@@ -116,7 +121,8 @@ def convert_and_save_model(
       with_gradient=with_gradient,
       polymorphic_shapes=[None, polymorphic_shapes],
       enable_xla=enable_xla,
-      native_serialization=native_serialization)
+      native_serialization=native_serialization,
+      native_serialization_platforms=native_serialization_platforms)
 
   def get_tf_variable(path, param):
     return tf.Variable(param, trainable=with_gradient, name="/".join(path))
@@ -142,14 +148,20 @@ def convert_and_save_model(
     # If there are more signatures, trace and cache a TF function for each one.
     tf_graph.get_concrete_function(input_signature)
   wrapper = _ReusableSavedModelWrapper(tf_graph, param_vars)
+
+  if saved_model_options:
+    saved_model_options.function_aliases = {"inference_func": tf_graph}
+  else:
+    saved_model_options = tf.saved_model.SaveOptions(
+        function_aliases={"inference_func": tf_graph}
+    )
+
   if with_gradient:
-    if not saved_model_options:
-      saved_model_options = tf.saved_model.SaveOptions(
-          experimental_custom_gradients=True)
-    else:
-      saved_model_options.experimental_custom_gradients = True
-  tf.saved_model.save(wrapper, model_dir, signatures=signatures,
-                      options=saved_model_options)
+    saved_model_options.experimental_custom_gradients = True
+
+  tf.saved_model.save(
+      wrapper, model_dir, signatures=signatures, options=saved_model_options
+  )
 
 
 class _ReusableSavedModelWrapper(tf.train.Checkpoint):

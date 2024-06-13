@@ -1,4 +1,4 @@
-# Copyright 2022 Big Vision Authors.
+# Copyright 2024 Big Vision Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,11 +13,14 @@
 # limitations under the License.
 
 # pylint: disable=line-too-long
-r"""A config for pre-training BiT on ImageNet-21k.
+r"""Pre-training ViT on ImageNet-21k as in https://arxiv.org/abs/2106.10270
 
 This config relies on the Imagenet-21k tfds dataset, which is not yet
 available publicly in TFDS. We intend to add the dataset to public TFDS soon,
 and this config will then be runnable.
+
+Note that regularization (dropout, stochastic depth) is not currently
+implemented. This was not beneficial for ImageNet-21k pre-trainning.
 """
 
 import big_vision.configs.common as bvcc
@@ -81,6 +84,9 @@ def get_config(arg=None):
   pp_common_i1k = pp_common.format(onehot_args='1000, key="label", key_result="labels"')
   config.input.pp = f'decode_jpeg_and_inception_crop(224)|flip_lr|{RANDAUG_DEF[aug_setting]}' + pp_common_i21k
   pp_eval = 'decode|resize_small(256)|central_crop(224)'
+
+  # To continue using the near-defunct randaug op.
+  config.pp_modules = ['ops_general', 'ops_image', 'ops_text', 'archive.randaug']
 
   # Aggressive pre-fetching because our models here are small, so we not only
   # can afford it, but we also need it for the smallest models to not be

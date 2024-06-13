@@ -1,4 +1,4 @@
-# Copyright 2023 The Scenic Authors.
+# Copyright 2024 The Scenic Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,6 +63,7 @@ _IMPORT_TABLE = {
     'robust_segvit_variants': (
         'scenic.projects.robust_segvit.datasets.segmentation_variants'
     ),
+    'flexio': 'scenic.dataset_lib.flexio.flexio',
 }
 
 

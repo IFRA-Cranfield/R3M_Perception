@@ -30,9 +30,6 @@ from megapose.utils.logging import get_logger, set_logging_level
 from megapose.visualization.bokeh_plotter import BokehPlotter
 from megapose.visualization.utils import make_contour_overlay
 
-# For zero-shot
-from megapose.zero_shot_interface import load_detections_zero
-
 logger = get_logger(__name__)
 
 
@@ -118,7 +115,6 @@ def save_predictions(
     object_data = [
         ObjectData(label=label, TWO=Transform(pose)) for label, pose in zip(labels, poses)
     ]
-    print(poses)
     object_data_json = json.dumps([x.to_json() for x in object_data])
     output_fn = example_dir / "outputs" / "object_data.json"
     output_fn.parent.mkdir(exist_ok=True)
@@ -138,10 +134,6 @@ def run_inference(
         example_dir, load_depth=model_info["requires_depth"]
     ).cuda()
     detections = load_detections(example_dir).cuda()
-    
-    # Zero-shot
-    detections = load_detections_zero(zero_shot_bbox=[642,585,738,677])
-    
     object_dataset = make_object_dataset(example_dir)
 
     logger.info(f"Loading model {model_name}.")

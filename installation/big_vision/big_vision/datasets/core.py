@@ -1,4 +1,4 @@
-# Copyright 2022 Big Vision Authors.
+# Copyright 2024 Big Vision Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import importlib
 class DataSource:
   """The API that any data source should implement."""
 
-  def get_tfdata(self, ordered):
+  def get_tfdata(self, ordered, *, process_split=True, allow_cache=True):
     """Creates this data object as a tf.data.Dataset.
 
     This will be called separately in each process, and it is up to the dataset
@@ -30,6 +30,9 @@ class DataSource:
     Args:
       ordered: if True, the dataset should use deterministic ordering, if False
         it may have undefined ordering. Think of True == val, False == train.
+      process_split: if False then every process receives the entire dataset
+        (e.g.  for evaluators running in a single process).
+      allow_cache: whether to allow caching the opened data or not.
 
     Returns:
       A tf.data.Dataset object.
@@ -44,13 +47,10 @@ class DataSource:
     """Returns number of examples in the dataset, regardless of sharding."""
     raise RuntimeError("not implemented for {self.__class__.__name__}")
 
-  def num_examples_per_process(self, nprocess=None):
+  def num_examples_per_process(self):
     """Returns a list of the numer of examples for each process.
 
     This is only needed for datasets that should go through make_for_inference.
-
-    Args:
-      nprocess: the number of processes, use `jax.process_count()` if None.
 
     Returns:
       Returns a list of the numer of examples for each process.

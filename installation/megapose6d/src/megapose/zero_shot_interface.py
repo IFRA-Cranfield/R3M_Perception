@@ -42,8 +42,3 @@ def load_detections_zero(zero_shot_bbox: List, CADName) -> DetectionsType:
     detections = make_detections_from_object_data(input_object_data).cuda()
     return detections
 
-
-# det = load_detections_zero(zero_shot_bbox=[200, 96, 468, 360])
-
-# print(det)
-

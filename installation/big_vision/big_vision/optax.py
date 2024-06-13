@@ -1,4 +1,4 @@
-# Copyright 2022 Big Vision Authors.
+# Copyright 2024 Big Vision Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,19 +22,23 @@ import optax
 
 
 def find_states(opt_state, cls):
-  leaves = jax.tree_util.tree_leaves(
+  leaves = jax.tree.leaves(
       opt_state, is_leaf=lambda node: isinstance(node, cls))
   return [leaf for leaf in leaves if isinstance(leaf, cls)]
 
 
-def get_count(opt_state):
+def get_count(opt_state, jittable=False):
   """Returns `ScaleByScheduleState.count` from `opt_state` as an integer."""
-  counts = {
-      int(state.count)
+  counts = [
+      state.count
       for state in find_states(opt_state, optax.ScaleByScheduleState)
-  }
-  assert len(counts) == 1, f"Expected exactly 1 ScaleByScheduleState: {counts}"
-  return next(iter(counts))
+  ]
+  if jittable:
+    return counts[0]
+  else:
+    counts = {int(c) for c in counts}
+    assert len(counts) == 1, f"Expected exactly 1 ScaleByScheduleState:{counts}"
+    return next(iter(counts))
 
 
 def replace_frozen(schedule, pytree, replacement, log=None):
@@ -43,7 +47,7 @@ def replace_frozen(schedule, pytree, replacement, log=None):
     return pytree
   masks, scheds = _make_mask_trees(pytree, schedule, log=log)
   frozen_mask, _, _ = _split_frozen(masks, scheds)
-  return jax.tree_map(
+  return jax.tree.map(
       lambda v, f: replacement if f else v, pytree, frozen_mask)
 
 
@@ -51,12 +55,12 @@ def make(config, params, *, sched_kw):
   """Returns gradient transform and learning rate functions."""
 
   # Global schedule. No schedule means frozen.
-  schedule = config.schedule
+  schedule = config.get("schedule", {})
   if not isinstance(schedule, (tuple, list)):
     schedule = [(".*", schedule)]
   masks, scheds = _make_mask_trees(params, schedule, "config.schedule")
   frozen_mask, masks, scheds = _split_frozen(masks, scheds)
-  not_frozen_mask = jax.tree_map(operator.not_, frozen_mask)
+  not_frozen_mask = jax.tree.map(operator.not_, frozen_mask)
   def create_schedule(mult=1.0, **kw):
     assert "base" not in kw, kw
     return u.create_learning_rate_schedule(base=mult, **kw)
@@ -129,12 +133,13 @@ def _make_mask_trees(params, patterns_values, log):
 def _split_frozen(masks, scheds):
   """Computes `frozen_mask` and updates `masks` and `scheds`."""
   # Specifying `None` as a scheduler freezes params.
-  all_false = jax.tree_map(lambda *bools: not any(bools), *masks)
-  assert not any(jax.tree_flatten(all_false)[0]), (
-      f"All params must be covered (use `None` for freezing): {all_false}")
+  all_false = jax.tree.map(lambda *bools: not any(bools), *masks)
+  not_covered = [k for k, v in u.tree_flatten_with_names(all_false)[0] if v]
+  assert not not_covered, (
+      f"All params must be covered (use `None` for freezing): {not_covered}")
   frozen_masks = [
       mask for mask, sched in zip(masks, scheds) if sched is None]
-  frozen_mask = jax.tree_map(
+  frozen_mask = jax.tree.map(
       lambda *bools: any(bools), *frozen_masks,
       all_false)  # `all_false` is required when `frozen_masks==[]`.
   masks, scheds = zip(*(
@@ -192,3 +197,4 @@ def momentum_hp(momentum=0.9, dtype=jnp.bfloat16, nesterov=False):
   return optax.trace(decay=momentum, accumulator_dtype=dtype, nesterov=nesterov)
 
 optax.big_vision.momentum_hp = momentum_hp  # pytype: disable=module-attr
+optax.big_vision.sgd = optax.identity  # pytype: disable=module-attr

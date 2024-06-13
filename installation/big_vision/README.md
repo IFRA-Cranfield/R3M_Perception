@@ -20,6 +20,12 @@ work on feature requests or accept external contributions, unless they were
 pre-approved (ask in an issue first). For a well-supported transfer-only
 codebase, see also [vision_transformer](https://github.com/google-research/vision_transformer).
 
+Note that `big_vision` is quite dynamic codebase and, while we intend to keep
+the core code fully-functional at all times, we can not guarantee timely updates
+of the project-specific code that lives in the `.../proj/...` subfolders.
+However, we provide a [table](#project-specific-commits) with last known
+commits where specific projects were known to work.
+
 The following research projects were originally conducted in the `big_vision`
 codebase:
 
@@ -51,6 +57,16 @@ codebase:
   Kornblith*, Xiaohua Zhai*, Matthias Minderer*, Michael Tschannen*, Ibrahim
   Alabdulmohsin*, Filip Pavetic*\
   Resources: [readme](big_vision/configs/proj/flexivit/README.md), [configs](big_vision/configs/proj/flexivit).
+- [Dual PatchNorm](https://arxiv.org/abs/2302.01327), by Manoj Kumar, Mostafa Dehghani, Neil Houlsby.
+- [Getting ViT in Shape: Scaling Laws for Compute-Optimal Model Design](https://arxiv.org/abs/2305.13035), by
+  Ibrahim Alabdulmohsin*, Xiaohua Zhai*, Alexander Kolesnikov, Lucas Beyer*.
+- (partial) [Scaling Vision Transformers to 22 Billion Parameters](https://arxiv.org/abs/2302.05442), by
+  Mostafa Dehghani*, Josip Djolonga*, Basil Mustafa*, Piotr Padlewski*, Jonathan Heek*, *wow many middle authors*, Neil Houlsby*.
+- (partial) [Finite Scalar Quantization: VQ-VAE Made Simple](https://arxiv.org/abs/2309.15505), by
+  Fabian Mentzer, David Minnen, Eirikur Agustsson, Michael Tschannen.
+- [GIVT: Generative Infinite-Vocabulary Transformers](https://arxiv.org/abs/2312.02116), by
+  Michael Tschannen, Cian Eastwood, Fabian Mentzer\
+  Resources: [readme](big_vision/configs/proj/givt/README.md), [config](big_vision/configs/proj/givt/givt_imagenet2012.py), [colab](https://colab.research.google.com/github/google-research/big_vision/blob/main/big_vision/configs/proj/givt/givt_demo_colab.ipynb).
 
 ### Multimodal research
 
@@ -61,21 +77,32 @@ codebase:
 - [Image-and-Language Understanding from Pixels Only](https://arxiv.org/abs/2212.08045), by
   Michael Tschannen, Basil Mustafa, Neil Houlsby\
   Resources: [readme](big_vision/configs/proj/clippo/README.md), [config](big_vision/configs/proj/clippo/train_clippo.py), [colab](https://colab.research.google.com/github/google-research/big_vision/blob/main/big_vision/configs/proj/clippo/clippo_colab.ipynb).
+- [Sigmoid Loss for Language Image Pre-Training](https://arxiv.org/abs/2303.15343), by
+  Xiaohua Zhai*, Basil Mustafa, Alexander Kolesnikov, Lucas Beyer*\
+  Resources: [colab and models](https://colab.research.google.com/github/google-research/big_vision/blob/main/big_vision/configs/proj/image_text/SigLIP_demo.ipynb), code TODO.
+- [A Study of Autoregressive Decoders for Multi-Tasking in Computer Vision](https://arxiv.org/abs/2303.17376), by
+  Lucas Beyer*, Bo Wan*, Gagan Madan*, Filip Pavetic*, Andreas Steiner*, Alexander Kolesnikov, André Susano Pinto, Emanuele Bugliarello, Xiao Wang, Qihang Yu, Liang-Chieh Chen, Xiaohua Zhai*.
+- [Image Captioners Are Scalable Vision Learners Too](https://arxiv.org/abs/2306.07915), by
+  Michael Tschannen*, Manoj Kumar*, Andreas Steiner*, Xiaohua Zhai, Neil Houlsby, Lucas Beyer*.\
+  Resources: [readme](big_vision/configs/proj/cappa/README.md), [config](big_vision/configs/proj/cappa/pretrain.py), [model](big_vision/models/proj/cappa/cappa.py).
+- [Three Towers: Flexible Contrastive Learning with Pretrained Image Models](https://arxiv.org/abs/2305.16999), by Jannik Kossen, Mark Collier, Basil Mustafa, Xiao Wang, Xiaohua Zhai, Lucas Beyer, Andreas Steiner, Jesse Berent, Rodolphe Jenatton, Efi Kokiopoulou.
+- (partial) [PaLI: A Jointly-Scaled Multilingual Language-Image Model](https://arxiv.org/abs/2209.06794), by Xi Chen, Xiao Wang, Soravit Changpinyo, *wow so many middle authors*, Anelia Angelova, Xiaohua Zhai, Neil Houlsby, Radu Soricut.
+- (partial) [PaLI-3 Vision Language Models: Smaller, Faster, Stronger](https://arxiv.org/abs/2310.09199), by Xi Chen, Xiao Wang, Lucas Beyer, Alexander Kolesnikov, Jialin Wu, Paul Voigtlaender, Basil Mustafa, Sebastian Goodman, Ibrahim Alabdulmohsin, Piotr Padlewski, Daniel Salz, Xi Xiong, Daniel Vlasic, Filip Pavetic, Keran Rong, Tianli Yu, Daniel Keysers, Xiaohua Zhai, Radu Soricut.
 
-### Knowledge distillation
+### Training
 
 - [Knowledge distillation: A good teacher is patient and consistent](https://arxiv.org/abs/2106.05237), by
   Lucas Beyer*, Xiaohua Zhai*, Amélie Royer*, Larisa Markeeva*, Rohan Anil,
   and Alexander Kolesnikov*\
   Resources: [README](big_vision/configs/proj/distill/README.md), [trainer](big_vision/trainers/proj/distill/distill.py), [colab](https://colab.research.google.com/drive/1nMykzUzsfQ_uAxfj3k35DYsATnG_knPl?usp=sharing).
-
-### Training
-
 - [Sharpness-Aware Minimization for Efficiently Improving Generalization](https://arxiv.org/abs/2010.01412), by
   Pierre Foret, Ariel Kleiner, Hossein Mobahi, Behnam Neyshabur
-
 - [Surrogate Gap Minimization Improves Sharpness-Aware Training](https://arxiv.org/abs/2203.08065), by Juntang Zhuang, Boqing Gong, Liangzhe Yuan, Yin Cui, Hartwig Adam, Nicha Dvornek, Sekhar Tatikonda, James Duncan and Ting Liu \
   Resources: [trainer](big_vision/trainers/proj/gsam/gsam.py), [config](big_vision/configs/proj/gsam/vit_i1k_gsam_no_aug.py) [reproduced results](https://github.com/google-research/big_vision/pull/8#pullrequestreview-1078557411)
+- [Tuning computer vision models with task rewards](https://arxiv.org/abs/2302.08242), by
+  André Susano Pinto*, Alexander Kolesnikov*, Yuge Shi, Lucas Beyer, Xiaohua Zhai.
+- (partial) [VeLO: Training Versatile Learned Optimizers by Scaling Up](https://arxiv.org/abs/2211.09760) by
+  Luke Metz, James Harrison, C. Daniel Freeman, Amil Merchant, Lucas Beyer, James Bradbury, Naman Agrawal, Ben Poole, Igor Mordatch, Adam Roberts, Jascha Sohl-Dickstein.
 
 ### Misc
 
@@ -115,7 +142,7 @@ details, but generally speaking, running on a GPU machine involves calling
 `python -m COMMAND` while running on TPUs, including multi-host, involves
 
 ```
-gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all
   --command "bash big_vision/run_tpu.sh COMMAND"
 ```
 
@@ -261,16 +288,16 @@ recommended. Below we provide instructions on how to do it.
 First, create some useful variables, which we be reused:
 
 ```
-export NAME="a name of the TPU deployment, e.g. my-tpu-machine"
-export ZONE="GCP geographical zone, e.g. europe-west4-a"
-export GS_BUCKET_NAME="Name of the storage bucket, e.g. my_bucket"
+export NAME=<a name of the TPU deployment, e.g. my-tpu-machine>
+export ZONE=<GCP geographical zone, e.g. europe-west4-a>
+export GS_BUCKET_NAME=<Name of the storage bucket, e.g. my_bucket>
 ```
 
 The following command line will create TPU VMs with 32 cores,
 4 hosts.
 
 ```
-gcloud alpha compute tpus tpu-vm create $NAME --zone $ZONE --accelerator-type v3-32 --version v2-tf-stable
+gcloud compute tpus tpu-vm create $NAME --zone $ZONE --accelerator-type v3-32 --version tpu-ubuntu2204-base
 ```
 
 ## Install `big_vision` on TPU VMs
@@ -280,8 +307,8 @@ dependencies.
 
 ```
 git clone https://github.com/google-research/big_vision
-gcloud alpha compute tpus tpu-vm scp --recurse big_vision/big_vision $NAME: --zone=$ZONE --worker=all
-gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "bash big_vision/run_tpu.sh"
+gcloud compute tpus tpu-vm scp --recurse big_vision/big_vision $NAME: --zone=$ZONE --worker=all
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "bash big_vision/run_tpu.sh"
 ```
 
 ## Download and prepare TFDS datasets
@@ -289,19 +316,23 @@ gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "
 We recommend preparing `tfds` data locally as described above and then uploading
 the data to `Google Cloud` bucket. However, if you prefer, the datasets which
 do not require manual downloads can be prepared automatically using a TPU
-machine as described below.
+machine as described below. Note that TPU machines have only 100 GB of disk
+space, and multihost TPU slices do not allow for external disks to be attached
+in a write mode, so the instructions below may not work for preparing large
+datasets. As yet another alternative, we provide instructions
+[on how to prepare `tfds` data on CPU-only GCP machine](#preparing-tfds-data-on-a-standalone-gcp-cpu-machine).
 
 Specifically, the seven TFDS datasets used during evaluations will be generated
 under `~/tensorflow_datasets` on TPU machine with this command:
 
 ```
-gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=0 --command "TFDS_DATA_DIR=~/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.tools.download_tfds_datasets cifar10 cifar100 oxford_iiit_pet oxford_flowers102 cars196 dtd uc_merced"
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=0 --command "TFDS_DATA_DIR=~/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.tools.download_tfds_datasets cifar10 cifar100 oxford_iiit_pet oxford_flowers102 cars196 dtd uc_merced"
 ```
 
 You can then copy the datasets to GS bucket, to make them accessible to all TPU workers.
 
 ```
-gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=0 --command "rm -r ~/tensorflow_datasets/downloads && gsutil cp -r ~/tensorflow_datasets gs://$GS_BUCKET_NAME"
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=0 --command "rm -r ~/tensorflow_datasets/downloads && gsutil cp -r ~/tensorflow_datasets gs://$GS_BUCKET_NAME"
 ```
 
 If you want to integrate other public or custom datasets, i.e. imagenet2012,
@@ -319,7 +350,7 @@ The following command line fine-tunes a pre-trained `vit-i21k-augreg-b/32` model
 on `cifar10` dataset.
 
 ```
-gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "TFDS_DATA_DIR=gs://$GS_BUCKET_NAME/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.train --config big_vision/configs/transfer.py:model=vit-i21k-augreg-b/32,dataset=cifar10,crop=resmall_crop --workdir gs://$GS_BUCKET_NAME/big_vision/workdir/`date '+%m-%d_%H%M'` --config.lr=0.03"
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "TFDS_DATA_DIR=gs://$GS_BUCKET_NAME/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.train --config big_vision/configs/transfer.py:model=vit-i21k-augreg-b/32,dataset=cifar10,crop=resmall_crop --workdir gs://$GS_BUCKET_NAME/big_vision/workdir/`date '+%m-%d_%H%M'` --config.lr=0.03"
 ```
 
 ## Run the train script on TPU VMs
@@ -329,13 +360,69 @@ e.g. `imagenet2012` ([prepare the TFDS dataset](https://www.tensorflow.org/datas
 run the following command line.
 
 ```
-gcloud alpha compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "TFDS_DATA_DIR=gs://$GS_BUCKET_NAME/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.train --config big_vision/configs/bit_i1k.py  --workdir gs://$GS_BUCKET_NAME/big_vision/workdir/`date '+%m-%d_%H%M'`"
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "TFDS_DATA_DIR=gs://$GS_BUCKET_NAME/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.train --config big_vision/configs/bit_i1k.py  --workdir gs://$GS_BUCKET_NAME/big_vision/workdir/`date '+%m-%d_%H%M'`"
 ```
+
+## FSDP training.
+
+`big_vision` supports flexible parameter and model sharding strategies.
+Currently, we support a popular FSDP sharding via a simple config change, see [this config example](big_vision/configs/transfer.py).
+For example, to run FSDP finetuning of a pretrained ViT-L model, run the following command (possible adjusting batch size depending on your hardware):
+
+```
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "TFDS_DATA_DIR=gs://$GS_BUCKET_NAME/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.train --config big_vision/configs/transfer.py:model=vit-i21k-augreg-l/16,dataset=oxford_iiit_pet,crop=resmall_crop,fsdp=True,batch_size=256 --workdir gs://$GS_BUCKET_NAME/big_vision/workdir/`date '+%m-%d_%H%M'` --config.lr=0.03"
+```
+
+## Image-text training with SigLIP.
+
+A minimal example that uses public `coco` captions data:
+
+```
+gcloud compute tpus tpu-vm ssh $NAME --zone=$ZONE --worker=all --command "TFDS_DATA_DIR=gs://$GS_BUCKET_NAME/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.trainers.proj.image_text.siglip --config big_vision/configs/proj/image_text/siglip_lit_coco.py --workdir gs://$GS_BUCKET_NAME/big_vision/`date '+%Y-%m-%d_%H%M'`"
+```
+
+
 
 ## Sometimes useful gcloud commands
 
-- Destroy the TPU machines: `gcloud alpha compute tpus tpu-vm delete $NAME --zone $ZONE`
-- Remove all big_vision-related folders on all hosts: `gcloud alpha compute tpus tpu-vm ssh $NAME --zone $ZONE --worker=all --command 'rm -rf ~/big_vision ~/bv_venv'`
+- Destroy the TPU machines: `gcloud compute tpus tpu-vm delete $NAME --zone $ZONE`
+- Remove all big_vision-related folders on all hosts: `gcloud compute tpus tpu-vm ssh $NAME --zone $ZONE --worker=all --command 'rm -rf ~/big_vision ~/bv_venv'`
+
+## Preparing `tfds` data on a standalone GCP CPU machine.
+
+First create a new machine and a disk (feel free to adjust exact machine type and disk settings/capacity):
+
+```
+export NAME_CPU_HOST=<A name of a CPU-only machine>
+export NAME_DISK=<A name of a disk>
+gcloud compute instances create $NAME_CPU_HOST --machine-type c3-standard-22 --zone $ZONE --image-family ubuntu-2204-lts --image-project ubuntu-os-cloud
+gcloud compute disks create $NAME_DISK --size 1000GB --zone $ZONE --type pd-balanced
+```
+
+Now attach the disk to the newly create machine:
+
+```
+gcloud compute instances attach-disk $NAME_CPU_HOST --disk $NAME_DISK --zone $ZONE
+```
+
+Next, `ssh` to the machine `gcloud compute ssh $NAME_CPU_HOST --zone=$ZONE` and
+[follow instructions to format and mount the disk](https://cloud.google.com/compute/docs/disks/format-mount-disk-linux).
+Let's assume it was mounted to `/mnt/disks/tfds`.
+
+Almost there, now clone and set up `big_vision`:
+
+```
+gcloud compute ssh $NAME_CPU_HOST --zone=$ZONE --command "git clone https://github.com/google-research/big_vision.git && cd big_vision && sh big_vision/run_tpu.sh"
+```
+
+Finally, prepare the dataset (e.g. `coco_captions`) using the utility script and
+copy the result to you google cloud bucket:
+
+```
+gcloud compute ssh $NAME_CPU_HOST --zone=$ZONE --command "cd big_vision && TFDS_DATA_DIR=/mnt/disks/tfds/tensorflow_datasets bash big_vision/run_tpu.sh big_vision.tools.download_tfds_datasets coco_captions"
+gcloud compute ssh $NAME_CPU_HOST --zone=$ZONE --command "rm -rf /mnt/disks/tfds/tensorflow_datasets/downloads && gsutil cp -r /mnt/disks/tfds/tensorflow_datasets gs://$GS_BUCKET_NAME"
+```
+
 
 # ViT baseline
 
@@ -369,6 +456,8 @@ core code and configs are expected to work at head.
 | distill    | https://github.com/google-research/big_vision/commit/2f3f493af048dbfd97555ff6060f31a0e686f17f |
 | GSAM       | WIP                                                                                           |
 | CLIPPO     | https://github.com/google-research/big_vision/commit/fd2d3bd2efc9d89ea959f16cd2f58ae8a495cd44 |
+| CapPa      | https://github.com/google-research/big_vision/commit/7ace659452dee4b68547575352c022a2eef587a5 |
+| GIVT       | https://github.com/google-research/big_vision/commit/0cb70881dd33b3343b769347dc19793c4994b8cb |
 
 # Citing the codebase
 
@@ -389,3 +478,9 @@ the following BibTEX to cite it:
 # Disclaimer
 
 This is not an official Google Product.
+
+# License
+
+Unless explicitly noted otherwise, everything in the big_vision codebase
+(including models and colabs) is released under the Apache2 license.
+See the LICENSE file for the full license text.

@@ -1,4 +1,4 @@
-# Copyright 2022 Big Vision Authors.
+# Copyright 2024 Big Vision Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
 
 # pylint: disable=line-too-long
 r"""Pre-training ViT on ILSVRC-2012 as in https://arxiv.org/abs/2106.10270
+
+This config does NOT include regularization (dropout, stochastic depth), which
+was shown to help with B/32, B/16, L/16 models in the paper (Figure 4).
 
 This configuration makes use of the "arg" to get_config to select which model
 to run, so a few examples are given below:
@@ -86,7 +89,7 @@ def get_config(arg=None):
       split='train[:99%]',
   )
   config.input.batch_size = 4096
-  config.input.cache_raw = not arg.runlocal  # Needs up to 120GB of RAM!
+  config.input.cache = 'raw_data' if arg.runlocal else 'none'  # Needs up to 120GB of RAM!
   config.input.shuffle_buffer_size = 250_000
 
   pp_common = (
@@ -100,6 +103,9 @@ def get_config(arg=None):
       pp_common.format(lbl='label')
   )
   pp_eval = 'decode|resize_small(256)|central_crop(224)' + pp_common
+
+  # To continue using the near-defunct randaug op.
+  config.pp_modules = ['ops_general', 'ops_image', 'ops_text', 'archive.randaug']
 
   # Aggressive pre-fetching because our models here are small, so we not only
   # can afford it, but we also need it for the smallest models to not be
@@ -144,7 +150,7 @@ def get_config(arg=None):
         pp_fn=pp_eval.format(lbl='label'),
         loss_name=config.loss,
         log_steps=2500,  # Very fast O(seconds) so it's fine to run it often.
-        cache_final=not arg.runlocal,
+        cache='final' if arg.runlocal else 'none',
     )
   config.evals = {}
   config.evals.train = get_eval('train[:2%]')

@@ -1,4 +1,4 @@
-# Copyright 2022 Big Vision Authors.
+# Copyright 2024 Big Vision Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,31 +21,33 @@ This evaluator can be used in two ways:
 from functools import partial
 from typing import Mapping
 
-from big_vision import input_pipeline
-from big_vision.datasets import core as ds_core
-from big_vision.pp import builder as pp_builder
+from big_vision.evaluators import common
 
 import jax
 import jax.numpy as jnp
 import numpy as np
 
 
+# Temporary global flag to facilitate backwards compatability. Will be removed
+# by the end of year 2023.
+API = 'jit'
+
+
 # Note: global to avoid jax re-compiling across different evaluator instances.
-@partial(jax.pmap, static_broadcasted_argnums=0, axis_name='batch')
-def _run_predict_fn(predict_fn, params, batch):
+@partial(jax.jit, static_argnums=0)
+def _run_predict_fn(predict_fn, train_state, batch):
   """Sum per-example metrics weighted by `_mask`."""
   mask = batch['_mask']
-  metrics = predict_fn(params, batch)
+  metrics = predict_fn(train_state, batch)
   # Sanity check output format of predict_fn.
   assert isinstance(metrics, Mapping), 'predict_fn must return a dict'
-  for y in jax.tree_leaves(metrics):
+  for y in jax.tree.leaves(metrics):
     if y.shape != mask.shape:
       raise ValueError(
           f'Expected per-example metrics of shape {mask.shape} found '
-          f'{jax.tree_map(lambda x: x.shape, metrics)}.')
+          f'{jax.tree.map(lambda x: x.shape, metrics)}.')
   metrics = {**metrics, '_mask': mask}
-  metrics = jax.tree_map(lambda x: jnp.sum(jnp.where(mask, x, 0)), metrics)
-  return jax.lax.psum(metrics, axis_name='batch')
+  return jax.tree.map(lambda x: jnp.sum(jnp.where(mask, x, 0)), metrics)
 
 
 class Evaluator:
@@ -55,30 +57,24 @@ class Evaluator:
   per-example metrics of shape [batch_size].
   """
 
-  def __init__(self, predict_fn, data, pp_fn, batch_size,
-               cache_final=True, cache_raw=False, prefetch=1):
-    data = ds_core.get(**data)
-    self.dataset, self.steps = input_pipeline.make_for_inference(
-        data.get_tfdata(ordered=True), batch_size=batch_size,
-        num_ex_per_process=data.num_examples_per_process(),
-        preprocess_fn=pp_builder.get_preprocess_fn(pp_fn),
-        cache_final=cache_final, cache_raw=cache_raw)
-    self.data_iter = input_pipeline.start_input_pipeline(self.dataset, prefetch)
+  def __init__(self, predict_fn, **kw):
+    self.get_data_iter, self.steps = common.eval_input_pipeline(**kw)
     self.predict_fn = partial(_run_predict_fn, predict_fn)
 
-  def run(self, params):
+  def run(self, train_state):
     """Computes all metrics."""
     metrics = []
 
     # Compute batch metrics without blocking.
-    for _, batch in zip(range(self.steps), self.data_iter):
-      batch_metrics = self.predict_fn(params, batch)
+    for _, batch in zip(range(self.steps), self.get_data_iter()):
+      batch_metrics = self.predict_fn(train_state, batch)
       metrics.append(batch_metrics)
 
-    # Transfer metrics from device 0 to host (blocking).
-    metrics = jax.device_get(jax.tree_map(lambda x: x[0], metrics))
+    # Transfer metrics (blocking).
+    metrics = jax.device_get(metrics)
 
-    metrics_sum = jax.tree_map(lambda *x: np.sum(x), *metrics)
+    # Accumulate metrics across batches.
+    metrics_sum = jax.tree.map(lambda *x: np.sum(x), *metrics)
     mask_sum = metrics_sum.pop('_mask')
     for key, value_sum in metrics_sum.items():
       yield (key, value_sum / mask_sum)

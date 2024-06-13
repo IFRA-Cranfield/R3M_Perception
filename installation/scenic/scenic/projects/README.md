@@ -30,6 +30,14 @@
     > for both unimodal and multimodal downstream tasks. Details can be found
     > in the [paper](https://arxiv.org/abs/2212.05922).
 
+*   [Boundary Attention](boundary_attention)
+
+    > Boundary Attention is differentiable bottom-up model for detecting
+    > boundaries in high noise at any resolution. It uses a form of local
+    > attention to infer boundaries that include contours, corners and
+    > junctions, all without rasterization. Details and a link to
+    > the paper can be found on its [website](https://boundaryattention.github.io/).
+
 *   [ViViT](vivit)
 
     > ViViT is a family of pure-transformer based models for video
@@ -152,6 +160,11 @@
     > vision and language models.
     > Details can be found in the [paper](https://arxiv.org/abs/2303.08998).
 
+*   [UnLoc](unloc)
+
+    > UnLoc proposes a unified architecture for video localization tasks,
+    > e.g., Temporal Action Localization, Moment Retrieval, and Action
+    > Segmentation. More details can be found in the [paper](https://openaccess.thecvf.com/content/ICCV2023/papers/Yan_UnLoc_A_Unified_Framework_for_Video_Localization_Tasks_ICCV_2023_paper.pdf).
 
 *   [REVEAL](knowledge_visual_language)
 
@@ -159,6 +172,28 @@
     > learns to retrieve world knowledge from a diverse set of multimodal
     > knowledge sources, through end-to-end pre-training.
     > Details can be found in the [paper](https://arxiv.org/abs/2212.05221).
+
+    *   [PixelLLM](pixel_llm)
+    > PixelLLM equips large language models with localization capability.
+    > Details can be found in the [paper](https://arxiv.org/abs/2312.09237).
+
+*   [GER-ALD](gerald)
+
+    > GER-ALD is a novel generative framework for web-scale visual entity
+    > recognition. We represent each entity by a compact, discriminative and
+    > semantic code that a generative model learns to auto-regressively decode.
+    > Details can be found in the [paper](https://arxiv.org/abs/2403.02041).
+
+*   [Streaming Dense Video Captioning](streaming_dvc)
+
+    > Streaming DVC is a framework for dense captioning of long videos.
+    > Details can be found in the [paper](https://arxiv.org/abs/2404.01297).
+
+*   [Dense Video Object Captioning](densevoc)
+
+    > Dense VOC is an end-to-end model for joint object detection, tracking,
+    > and captioning in videos.
+    > Details can be found in the [paper](https://arxiv.org/abs/2306.11729).
 
 <a name="projects"></a>
 ## Scenic projects
