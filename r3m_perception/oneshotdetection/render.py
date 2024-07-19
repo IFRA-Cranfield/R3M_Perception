@@ -9,12 +9,12 @@ else:
     exit()
 
 # PATHS TO IMG and CAD:
-cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', CADName, 'mesh', CADName)
-img_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', CADName, 'osd_execution')
+cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'mesh', CADName)
+img_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'osd_execution')
 
 cadPATH = cad_PATH + "/" + CADName + ".ply"
 objPATH = img_PATH + "/" + CADName + ".obj"
-imgPATH = img_PATH + "/OSD_Input.png"
+imgPATH = img_PATH + "/OSD_Inputs/OSD_Input_" + CADName + ".png"
 
 # ========================================= #
 # 1. CONVERT from ply to obj:

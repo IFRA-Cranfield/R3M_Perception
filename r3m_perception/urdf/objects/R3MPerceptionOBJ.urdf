@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<robot name="r3m_object" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Input parameters: -->
+  <xacro:arg name="name" default="none"/>
+  <xacro:property name="name" value="$(arg name)"/>
+
+  <link name="${name}">
+
+    <inertial>
+
+      <origin xyz= "0.0 0.0 0.0" rpy="0 0 0"/>
+      <mass value= "0.1" />
+      <inertia
+        ixx="0.000015" ixy="0.0"  ixz="0.0"
+        iyy="0.000015" iyz="0.0"
+        izz="0.000015" />
+
+    </inertial>
+
+    <collision name="collision">
+
+      <origin xyz= "0.0 0.0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find r3m_perception)/cad/mesh/${name}/${name}.dae"/>
+      </geometry>
+
+    </collision>
+
+    <visual name="visual">
+
+      <origin xyz= "0.0 0.0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file://$(find r3m_perception)/cad/mesh/${name}/${name}.dae"/>
+      </geometry>
+
+    </visual>
+
+  </link>
+
+  <gazebo reference="${name}">
+    <selfCollide>false</selfCollide>
+  </gazebo>
+
+  <!-- LOAD ObjectPose Gazebo (ROS2) PLUGIN: -->
+  <gazebo>
+    <plugin name="ros2_objectpose_plugin" filename="libros2_objectpose_plugin.so" >
+      <ros>
+        <namespace>${name}</namespace>
+      </ros>
+    </plugin>
+  </gazebo>
+
+</robot>

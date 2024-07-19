@@ -4,8 +4,17 @@
 # ROS2.0 TEMPLATES - Action Server
 import os
 MP_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception_setup', 'megapose6d', 'src')
+
 # Import libraries:
-from r3m_perception.msg import Trans
+from dataclasses import dataclass
+@dataclass
+class Trans:
+    x: float
+    y: float
+    z: float
+    yaw: float
+    pitch: float
+    roll: float
 
 # Standard Library
 import argparse
@@ -48,8 +57,9 @@ from megapose.visualization.bokeh_plotter import BokehPlotter
 from megapose.visualization.utils import make_contour_overlay
 
 from scipy.spatial.transform import Rotation as R
-# For zero-shot
-from megapose.zero_shot_interface import load_detections_zero
+
+# For zero-shot:
+from megapose.zero_shot_interface import load_detections_zero_multi
 
 # For UI
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton
@@ -60,7 +70,7 @@ logger = get_logger(__name__)
 
 class MEGAPOSE_CLASS():
     
-    def __init__(self, CADName, CAMERA):
+    def __init__(self):
         
         self.parser = argparse.ArgumentParser()
         # self.parser.add_argument("example_name")
@@ -74,33 +84,11 @@ class MEGAPOSE_CLASS():
         
         data_dir = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception','r3m_perception', 'cad')
         assert data_dir
-        self.example_dir = data_dir + '/' + CADName
-        self.cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', CADName)
-        camera_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'config', CAMERA)
-        
-        self.camera_data = CameraData.from_json((Path(camera_PATH) / 'camera_data.json').read_text())
+        self.example_dir = data_dir
         self.object_dataset = self.make_object_dataset(self.example_dir)
         self.model_info = NAMED_MODELS[self.args.model]
         self.pose_estimator = load_named_model(self.args.model, self.object_dataset).cuda()
-        self.vis_dir = Path(self.example_dir) / 'm6d_execution' / 'visualizations'
-        self.vis_dir.mkdir(exist_ok=True)
-        CAM = camera_PATH + "/config.yaml"
-        TRANS = camera_PATH + "/transformation.yaml"
-        #Load resolution from yaml:
-        # Get RECIPE VALUES:
-        with open(CAM, 'r') as YAML:
-            camYAML = yaml.safe_load(YAML)
-            
-        self.w = camYAML["resolution"]["W"] 
-        self.h = camYAML["resolution"]["H"] 
-
-        with open(TRANS, 'r') as YAML:
-            transYAML = yaml.safe_load(YAML)
-            
-        self.t1 = transYAML["transformation"]["t1"] 
-        self.t2 = transYAML["transformation"]["t2"] 
-        self.CADName = CADName
-
+        
     def EulerToQuat(self, roll, pitch, yaw):
 
         RESULT = {"qx": None, "qy": None, "qz": None, "qw": None}
@@ -167,9 +155,11 @@ class MEGAPOSE_CLASS():
 
 
     def make_object_dataset(self,example_dir: Path) -> RigidObjectDataset:
+        
         rigid_objects = []
         mesh_units = "mm"
-        object_dirs = (Path(self.cad_PATH) / "mesh").iterdir()
+        object_dirs = (Path(example_dir) / "mesh").iterdir()
+        
         for object_dir in object_dirs:
             label = object_dir.name
             mesh_path = None
@@ -180,6 +170,7 @@ class MEGAPOSE_CLASS():
             assert mesh_path, f"couldnt find a obj or ply mesh for {label}"
             rigid_objects.append(RigidObject(label=label, mesh_path=mesh_path, mesh_units=mesh_units))
             # TODO: fix mesh units
+            
         rigid_object_dataset = RigidObjectDataset(rigid_objects)
         return rigid_object_dataset
     
@@ -200,50 +191,98 @@ class MEGAPOSE_CLASS():
         logger.info(f"Wrote predictions: {output_fn}")
         return
 
-    def EXECUTE_FI(self, frame, BB):
+    def EXECUTE_FI(self, frame, CAMERA, BB):
+        
+        print("AA")
+        
+        self.cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'mesh')
+        camera_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'config', CAMERA)
+        
+        self.camera_data = CameraData.from_json((Path(camera_PATH) / 'camera_data.json').read_text())
+        self.vis_dir = Path(self.example_dir) / 'm6d_execution' / 'visualizations'
+        self.vis_dir.mkdir(exist_ok=True)
+        CAM = camera_PATH + "/config.yaml"
+        TRANS = camera_PATH + "/transformation.yaml"
+        
+        #Load resolution from yaml:
+        # Get RECIPE VALUES:
+        with open(CAM, 'r') as YAML:
+            camYAML = yaml.safe_load(YAML)
+            
+        self.w = camYAML["resolution"]["W"] 
+        self.h = camYAML["resolution"]["H"] 
+
+        with open(TRANS, 'r') as YAML:
+            transYAML = yaml.safe_load(YAML)
+            
+        self.t1 = transYAML["transformation"]["t1"] 
+        self.t2 = transYAML["transformation"]["t2"] 
         self.img = frame[0:int(self.h),int((self.w - self.h/3*4)/2):int(self.w - (self.w - self.h/3*4)/2)]
         self.rgb, depth = self.img, None
         self.rgb.shape[:2] == self.camera_data.resolution
         
         # self.bbox -> BB:
-        self.bbox_extended = [BB['tlx']*1.43, BB['tly']*1.43, BB['brx']*1.43, BB['bry']*1.43]
+        self.bbox_extended = []
+        for item in BB['Result']:
+            label = item['Name']
+            bbox_modal = [
+                item['tlx'] * (self.h/756),
+                item['tly'] * (self.h/756),
+                item['brx'] * (self.h/756),
+                item['bry'] * (self.h/756)
+            ]
+            self.bbox_extended.append({"label": label, "bbox_modal": bbox_modal})
         
-        self.detections = load_detections_zero(zero_shot_bbox=self.bbox_extended, CADName=self.CADName)
+        self.detections = load_detections_zero_multi(zero_shot_bbox=self.bbox_extended)
         self.observation = ObservationTensor.from_numpy(self.rgb, depth, self.camera_data.K).cuda()
-        
+
+        print("BB")
 
         self.output, _ = self.pose_estimator.run_inference_pipeline(
             self.observation, detections=self.detections, **self.model_info["inference_parameters"]
         )
+        
+        print("CC")
+        
+        print(self.output)
+        
         labels = self.output.infos["label"]
         poses = self.output.poses.cpu().numpy()
-        print('Two: ', Transform(poses[0]))
-        self.initial_message_received = True
+        print(poses)
+        
         self.save_predictions(self.example_dir, self.output)
         self.my_visual(self.camera_data)
-        MSG = Trans()
-        transformation1 = np.array(self.t1)
-        transformation2 = np.array(self.t2)
-        # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
-        MSG.x, MSG.y, MSG.z, MSG.roll, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(transformation1,np.matmul(transformation2,Transform(poses[0]).matrix)))
         
+        M6D_RESULT = []
         
-        ORIENTATION = self.EulerToQuat(MSG.roll, MSG.pitch, MSG.yaw)
+        for pose, label in zip(poses, labels):
+            print('Two: ', Transform(pose))
+            self.initial_message_received = True
+            
+            MSG = Trans()
+            transformation1 = np.array(self.t1)
+            transformation2 = np.array(self.t2)
+            # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
+            MSG.x, MSG.y, MSG.z, MSG.roll, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(transformation1,np.matmul(transformation2,Transform(pose).matrix)))
+            
+            ORIENTATION = self.EulerToQuat(MSG.roll, MSG.pitch, MSG.yaw)
+            
+            # RETURN RESULT:
+            RESULT = {}
+            RESULT['name'] = label
+            RESULT['x'] = round(MSG.x, 5)
+            RESULT['y'] = round(MSG.y, 5)
+            RESULT['z'] = round(MSG.z, 5)
+            RESULT['qx'] = round(ORIENTATION["qx"], 5)
+            RESULT['qy'] = round(ORIENTATION["qy"], 5)
+            RESULT['qz'] = round(ORIENTATION["qz"], 5)
+            RESULT['qw'] = round(ORIENTATION["qw"], 5)
+            M6D_RESULT.append(RESULT)
         
-        # RETURN RESULT:
-        RESULT = {}
-        RESULT['x'] = round(MSG.x, 5)
-        RESULT['y'] = round(MSG.y, 5)
-        RESULT['z'] = round(MSG.z, 5)
-        RESULT['qx'] = round(ORIENTATION["qx"], 5)
-        RESULT['qy'] = round(ORIENTATION["qy"], 5)
-        RESULT['qz'] = round(ORIENTATION["qz"], 5)
-        RESULT['qw'] = round(ORIENTATION["qw"], 5)
-        
-        
-        return RESULT
+        return M6D_RESULT
 
     def EXECUTE_RTI(self, frame):
+        
         self.img = frame[0:int(self.h),int((self.w - self.h/3*4)/2):int(self.w - (self.w - self.h/3*4)/2)]
         self.rgb, depth = self.img, None
         self.rgb.shape[:2] == self.camera_data.resolution
@@ -256,29 +295,37 @@ class MEGAPOSE_CLASS():
             keep_all_outputs=True,
             cuda_timer=False,
         )
+        
         #labels = self.output.infos["label"]
+        
         self.output = self.output[f"iteration={1}"]
         poses = self.output.poses.cpu().numpy()
-        print('Two: ', Transform(poses[0]))
-        #self.save_predictions(self.example_dir, self.output)
-        #self.my_visual(self.camera_data)
-        MSG = Trans()
-        transformation1 = np.array(self.t1)
-        transformation2 = np.array(self.t2)
-        # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
-        MSG.x, MSG.y, MSG.z, MSG.roll, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(transformation1,np.matmul(transformation2,Transform(poses[0]).matrix)))
+        labels = self.output.infos["label"]
         
+        M6D_RESULT = []
         
-        ORIENTATION = self.EulerToQuat(MSG.roll, MSG.pitch, MSG.yaw)
-        
-        # RETURN RESULT:
-        RESULT = {}
-        RESULT['x'] = round(MSG.x, 5)
-        RESULT['y'] = round(MSG.y, 5)
-        RESULT['z'] = round(MSG.z, 5)
-        RESULT['qx'] = round(ORIENTATION["qx"], 5)
-        RESULT['qy'] = round(ORIENTATION["qy"], 5)
-        RESULT['qz'] = round(ORIENTATION["qz"], 5)
-        RESULT['qw'] = round(ORIENTATION["qw"], 5)
+        for pose, label in zip(poses, labels):
+            print('Two: ', Transform(poses[0]))
+            #self.save_predictions(self.example_dir, self.output)
+            #self.my_visual(self.camera_data)
+            MSG = Trans()
+            transformation1 = np.array(self.t1)
+            transformation2 = np.array(self.t2)
+            # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
+            MSG.x, MSG.y, MSG.z, MSG.roll, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(transformation1,np.matmul(transformation2,Transform(poses[0]).matrix)))
+            
+            ORIENTATION = self.EulerToQuat(MSG.roll, MSG.pitch, MSG.yaw)
+            
+            # RETURN RESULT:
+            RESULT = {}
+            RESULT['name'] = label
+            RESULT['x'] = round(MSG.x, 5)
+            RESULT['y'] = round(MSG.y, 5)
+            RESULT['z'] = round(MSG.z, 5)
+            RESULT['qx'] = round(ORIENTATION["qx"], 5)
+            RESULT['qy'] = round(ORIENTATION["qy"], 5)
+            RESULT['qz'] = round(ORIENTATION["qz"], 5)
+            RESULT['qw'] = round(ORIENTATION["qw"], 5)
+            M6D_RESULT.append(RESULT)
 
-        return RESULT
+        return M6D_RESULT
