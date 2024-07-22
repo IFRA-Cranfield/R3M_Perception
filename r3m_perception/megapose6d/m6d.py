@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import sys
+sys.dont_write_bytecode = True
 
 # R3M Project - Cranfield University
 # ROS2.0 TEMPLATES - Action Server
@@ -259,7 +261,7 @@ class MEGAPOSE_CLASS():
             print('Two: ', Transform(pose))
             self.initial_message_received = True
             
-            MSG = Trans()
+            MSG = Trans(0.0,0.0,0.0,0.0,0.0,0.0)
             transformation1 = np.array(self.t1)
             transformation2 = np.array(self.t2)
             # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
@@ -269,7 +271,7 @@ class MEGAPOSE_CLASS():
             
             # RETURN RESULT:
             RESULT = {}
-            RESULT['name'] = label
+            RESULT['Name'] = label
             RESULT['x'] = round(MSG.x, 5)
             RESULT['y'] = round(MSG.y, 5)
             RESULT['z'] = round(MSG.z, 5)
@@ -308,7 +310,7 @@ class MEGAPOSE_CLASS():
             print('Two: ', Transform(poses[0]))
             #self.save_predictions(self.example_dir, self.output)
             #self.my_visual(self.camera_data)
-            MSG = Trans()
+            MSG = Trans(0.0,0.0,0.0,0.0,0.0,0.0)
             transformation1 = np.array(self.t1)
             transformation2 = np.array(self.t2)
             # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
@@ -318,7 +320,7 @@ class MEGAPOSE_CLASS():
             
             # RETURN RESULT:
             RESULT = {}
-            RESULT['name'] = label
+            RESULT['Name'] = label
             RESULT['x'] = round(MSG.x, 5)
             RESULT['y'] = round(MSG.y, 5)
             RESULT['z'] = round(MSG.z, 5)

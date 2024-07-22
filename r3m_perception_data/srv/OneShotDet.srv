@@ -1,0 +1,6 @@
+string[] cadlist
+string camera
+sensor_msgs/Image img
+---
+bool success
+OneShotResult[] result

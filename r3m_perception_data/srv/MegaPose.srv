@@ -1,0 +1,6 @@
+OneShotResult[] input
+string camera
+sensor_msgs/Image img
+---
+bool success
+objectpose_msgs/ObjectPose[] result

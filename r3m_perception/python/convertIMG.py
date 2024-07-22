@@ -36,7 +36,7 @@ class imgSUB(Node):
         self.IMAGE = IMG
 
 # =========================================== #
-# FUNCTION -> GET image from ROS 2 topic:
+# FUNCTION -> GET image (CV2 format) from ROS 2 topic:
 def toCV2_fromTOPIC(TOPIC):
     
     # INITIALISE CLASSES:
@@ -57,3 +57,54 @@ def toCV2_fromTOPIC(TOPIC):
     
     # Return IMAGE (OpenCV format):
     return(IMG_CV2)
+
+# =========================================== #
+# FUNCTION -> GET image (ROS 2 format) from ROS 2 topic:
+def toROS2IMG_fromTOPIC(TOPIC):
+    
+    # INITIALISE CLASSES:
+    SUB = imgSUB(TOPIC)
+    
+    # Get IMAGE (sensor_msgs/Image format) from ROS 2 TOPIC:
+    T = time.time() + 0.25
+    while time.time() < T:
+        rclpy.spin_once(SUB)   
+    IMG_ROS2 = SUB.IMAGE
+    
+    # Delete CLASS INSTANCES:
+    del SUB
+    
+    # Return IMAGE (OpenCV format):
+    return(IMG_ROS2)
+
+# =========================================== #
+# FUNCTION -> GET image from ROS 2 IMG:
+def toCV2_fromROS2IMG(IMG_ROS2):
+    
+    # INITIALISE CLASSES:
+    BRIDGE = CvBridge()
+    
+    # CONVERT:
+    IMG_CV2 = BRIDGE.imgmsg_to_cv2(IMG_ROS2, "passthrough")
+    
+    # Delete CLASS INSTANCES:
+    del BRIDGE
+    
+    # Return IMAGE (OpenCV format):
+    return(IMG_CV2)
+
+# =========================================== #
+# FUNCTION -> GET image from ROS 2 IMG:
+def toROS2IMG_fromCV2(IMG_CV2):
+    
+    # INITIALISE CLASSES:
+    BRIDGE = CvBridge()
+    
+    # CONVERT:
+    IMG_ROS2 = BRIDGE.cv2_to_imgmsg(IMG_CV2, "passthrough")
+    
+    # Delete CLASS INSTANCES:
+    del BRIDGE
+    
+    # Return IMAGE (OpenCV format):
+    return(IMG_ROS2)

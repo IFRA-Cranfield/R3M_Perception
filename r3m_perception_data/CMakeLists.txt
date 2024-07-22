@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(r3m_perception)
+project(r3m_perception_data)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -25,45 +25,43 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)AddTwoInts
+  #set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   # uncomment the line when this package is not in a git repo
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# ===== PYTHON ===== #
-install(PROGRAMS  
-  
-  oneshotdetection/osd_test.py
-  oneshotdetection/osd.py
-  oneshotdetection/render.py
-
-  megapose6d/m6d_test.py
-  megapose6d/m6d.py
-
-  oneshotdetection/OSD_server.py
-  oneshotdetection/OSD_client.py
-  megapose6d/M6D_server.py
-  megapose6d/M6D_client.py
-
-  python/ROS2_client.py
-
-  DESTINATION lib/${PROJECT_NAME} 
+install(
+  DIRECTORY  
+    msg
+    srv
+  DESTINATION 
+    share/${PROJECT_NAME}
 )
 
-# ===== DIRECTORIES ===== #
-install(DIRECTORY
-  
-  cad
-  config
-  megapose6d
-  oneshotdetection
-  pictures
-  urdf
-  python
+# ================================================== #
 
-  DESTINATION share/${PROJECT_NAME}/
+# ADD ROS 2 .msg, .srv and .action files:
+
+find_package(rosidl_default_generators REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(objectpose_msgs REQUIRED)
+
+set(msg_files
+  "msg/OneShotResult.msg"
+)
+set(srv_files
+  "srv/OneShotDet.srv"
+  "srv/MegaPose.srv"
+)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  
+  ${msg_files}
+  ${srv_files}
+
+  DEPENDENCIES sensor_msgs objectpose_msgs
 )
 
 ament_package()
