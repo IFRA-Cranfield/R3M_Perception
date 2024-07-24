@@ -197,6 +197,7 @@ class R3MP():
         # Get ObjectPose for future comparison:
         obj = OBJECT(OBJList)
         ObjectPoseList = obj.GetObjectPose()
+        print("AA")
         del obj
         
         print("STEP 1: Completed.")
@@ -392,7 +393,7 @@ def main(args=None):
     ENTITY_CLASS = EntityClient()
     
     # Define input variables:
-    N = 1
+    N = 50
     CAMERA = "lenovoFHD_gazebo"
     OBJECTS = ['adapter_plate_triangular']
     IMGTopic = "camera/image_raw"
@@ -404,10 +405,11 @@ def main(args=None):
         i = i+1
         
         print("======== "+ TESTName + " ========")
+        print("")
         print("Iteration N:" + str(i))
         
         # 1. SPAWN OBJECTS:
-        ENTITY_CLASS.spawn_REQUEST(OBJECTS)
+        #ENTITY_CLASS.spawn_REQUEST(OBJECTS)
         
         time.sleep(1)
         
