@@ -23,14 +23,18 @@ import rclpy
 from rclpy.node import Node
 from ament_index_python.packages import get_package_share_directory
 
+# R3M Perception PATH:
+PATH_P = os.path.join(get_package_share_directory("r3m_perception"))
+
+# Import FUNCTIONS:
+PATH_F = PATH_P + "/python/functions"
+sys.path.append(PATH_F)
 # Import convertIMG:
 from convertIMG import toCV2_fromTOPIC
-
 # IMPORT PythonClass -> Get OBJECT POSES:
 from ObjectState import OBJECT
 
 # IMPORT OSD and M6D:
-PATH_P = os.path.join(get_package_share_directory("r3m_perception"))
 PATH_OSD = PATH_P + "/oneshotdetection"
 PATH_M6D = PATH_P + "/megapose6d"
 

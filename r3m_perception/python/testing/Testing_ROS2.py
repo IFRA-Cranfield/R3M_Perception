@@ -31,11 +31,14 @@ from r3m_perception_data.srv import OneShotDet
 from gazebo_msgs.srv import SpawnEntity
 from gazebo_msgs.srv import DeleteEntity
 
-# IMPORT -> IMG conversion functions:
-PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'python')
-sys.path.append(PATH)
-from convertIMG import toROS2IMG_fromTOPIC, toCV2_fromROS2IMG
+# R3M Perception PATH:
+PATH_P = os.path.join(get_package_share_directory("r3m_perception"))
 
+# Import FUNCTIONS:
+PATH_F = PATH_P + "/python/functions"
+sys.path.append(PATH_F)
+# Import convertIMG:
+from convertIMG import toROS2IMG_fromTOPIC, toCV2_fromROS2IMG
 # IMPORT PythonClass -> Get OBJECT POSES:
 from ObjectState import OBJECT
 
