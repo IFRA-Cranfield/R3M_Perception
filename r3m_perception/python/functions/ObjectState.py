@@ -40,7 +40,7 @@ class OBJECT(Node):
         for x in ObjectList:
             
             TopicName = "/" + x + "/ObjectPose"
-            self.SUBList.append(self.create_subscription(ObjectPose, TopicName, self.CALLBACK_FN, 10))
+            self.SUBList.append(self.create_subscription(ObjectPose, TopicName, self.CALLBACK_FN, 1))
             
             OBJ = {}
             OBJ["Name"] = x
@@ -48,7 +48,7 @@ class OBJECT(Node):
             self.ObjectPoseList.append(OBJ) 
         
     def CALLBACK_FN(self, OBJ):
-
+        
         for x in self.ObjectPoseList:
             if (OBJ.objectname == x["Name"]):
                 x["Pose"] = OBJ
@@ -61,4 +61,7 @@ class OBJECT(Node):
             rclpy.spin_once(self)
 
         # 2. RETURN:
+        return(self.ObjectPoseList)
+    
+    def GetObjectPose_LAST(self):
         return(self.ObjectPoseList)

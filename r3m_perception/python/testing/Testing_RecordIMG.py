@@ -13,7 +13,7 @@ sys.dont_write_bytecode = True
 # ========================================================================================= #
 
 # System:
-import os, sys, time, xacro, random, yaml
+import os, sys, time, xacro, random, yaml, threading
 
 # OpenCV:
 import cv2
@@ -26,6 +26,7 @@ from ament_index_python.packages import get_package_share_directory
 # IMPORT /SpawnEntity and /DeleteEntity ROS2 Services:
 from gazebo_msgs.srv import SpawnEntity
 from gazebo_msgs.srv import DeleteEntity
+from std_srvs.srv import Empty
 
 # R3M Perception PATH:
 PATH_P = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception')
@@ -36,7 +37,7 @@ sys.path.append(PATH_F)
 # IMPORT PythonClass -> Get OBJECT POSES:
 from ObjectState import OBJECT
 # Import convertIMG:
-from convertIMG import toCV2_fromTOPIC
+from convertIMG import imgSUB
 
 # ========================================================================================= #
 # ========================================================================================= #
@@ -49,12 +50,12 @@ def saveIMG(i, PATH, IMG):
 # ========================================================================================= #
 # ========================================================================================= #
 # Function -> Record OBJECT POSES:
-def recordObjPose(yamlNAME, i, OBJ):
-    
-    ObjectPoseList = OBJ.GetObjectPose()
+def recordObjPose(yamlNAME, i, ObjectPoseList):
 
     with open(yamlNAME, 'r') as F:
         testINFO = yaml.safe_load(F)
+
+    inputDICT = {}
 
     for x in ObjectPoseList:
         
@@ -67,7 +68,6 @@ def recordObjPose(yamlNAME, i, OBJ):
         POSE["qz"] = round(x["Pose"].qz, 5)
         POSE["qw"] = round(x["Pose"].qw, 5)
 
-        inputDICT = {}
         inputDICT[x["Name"]] = {}
         inputDICT[x["Name"]]["Gazebo"] = POSE
 
@@ -92,10 +92,13 @@ class EntityClient(Node):
         # Create ROS2 Service Clients:
         self.cli_SPAWN = self.create_client(SpawnEntity, "/spawn_entity")  
         self.cli_DELETE = self.create_client(DeleteEntity, "/delete_entity") 
+        self.cli_PAUSE = self.create_client(Empty, "/pause_physics")
+        self.cli_UNPAUSE = self.create_client(Empty, "/unpause_physics")
 
         # Declare REQUEST variable (of CUSTOM DATA type):
         self.req_SPAWN = SpawnEntity.Request()  
         self.req_DELETE = DeleteEntity.Request()
+        self.req_EMPTY = Empty.Request()
 
     def spawn_REQUEST(self, ObjectList):
         
@@ -110,7 +113,7 @@ class EntityClient(Node):
             self.req_SPAWN.xml = xacro_file.toxml()
             self.req_SPAWN.initial_pose.position.x = random.uniform(0.5, 0.7)
             self.req_SPAWN.initial_pose.position.y = random.uniform(0.1, 0.9)
-            self.req_SPAWN.initial_pose.position.z = 1.0
+            self.req_SPAWN.initial_pose.position.z = 0.95
             # Add here -> Random orientation.
 
             # Assign RESULT value (future):
@@ -121,6 +124,12 @@ class EntityClient(Node):
         for x in ObjectList:
             self.req_DELETE.name = x
             self.future_DELETE = self.cli_DELETE.call_async(self.req_DELETE)
+
+    def pause_REQUEST(self):
+        self.future_PAUSE = self.cli_PAUSE.call_async(self.req_EMPTY)
+
+    def unpause_REQUEST(self):
+        self.future_UNPAUSE = self.cli_UNPAUSE.call_async(self.req_EMPTY)
 
 # ========================================================================================= #
 # ========================================= MAIN ========================================== #
@@ -139,8 +148,8 @@ def main(args=None):
     # INPUT VARIABLES:
     FOLDER = os.path.join(os.path.expanduser('~'), 'PerceptionTesting')
     TESTName = "Test001"
-    ITERATIONS = 100
-    OBJECTS = ['adapter_plate_triangular']
+    ITERATIONS = 10
+    OBJECTS = ['adapter_plate_triangular', 'bracket_big', 'thread', 'star']
     CAMERA = "lenovoFHD_gazebo"
     
     PATH = FOLDER + "/" + TESTName
@@ -165,7 +174,16 @@ def main(args=None):
     # Init -> ROS 2:
     rclpy.init(args=args)
     ENTITY_CLASS = EntityClient()
-    OBJ = OBJECT(OBJECTS)
+
+    # Python THREAD for -> IMG SUBSCRIBER, OBJECTPOSE SUBSCRIBER:
+    subIMG = imgSUB("camera/image_raw")
+    subOBJECTPOSE = OBJECT(OBJECTS)
+    
+    executor = rclpy.executors.MultiThreadedExecutor()
+    executor.add_node(subIMG)
+    executor.add_node(subOBJECTPOSE)
+    THREAD = threading.Thread(target=executor.spin, daemon=True)
+    THREAD.start()
 
     # LOOP:
     i = 0
@@ -177,18 +195,21 @@ def main(args=None):
 
         # 1. SPAWN OBJECTS:
         ENTITY_CLASS.spawn_REQUEST(OBJECTS)
-        time.sleep(1)
-
+        time.sleep(int(len(OBJECTS)))
+        ENTITY_CLASS.pause_REQUEST()
+        
         # 2. TAKE + SAVE PICTURE:
-        IMG = toCV2_fromTOPIC("camera/image_raw")
+        IMG = subIMG.toCV2_fromTOPIC()
         saveIMG(i, PATH, IMG)
 
         # 3. GET + RECORD OBJECTPOSES:
-        recordObjPose(yamlNAME, i, OBJ)
+        ObjectList = subOBJECTPOSE.GetObjectPose_LAST()
+        recordObjPose(yamlNAME, i, ObjectList)
 
         # 4. REMOVE OBJECTS:
+        ENTITY_CLASS.unpause_REQUEST()
         ENTITY_CLASS.delete_REQUEST(OBJECTS)
-        time.sleep(1)
+        time.sleep(int(len(OBJECTS)))
 
         print("")
 

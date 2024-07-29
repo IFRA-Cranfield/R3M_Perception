@@ -27,13 +27,18 @@ class imgSUB(Node):
             Image,                                             
             TOPICNAME, 
             self.listener_callback, 
-            10) 
+            1) 
         self.subscription 
         
         self.IMAGE = Image()
+        self.BRIDGE = CvBridge()
 
     def listener_callback(self, IMG):
         self.IMAGE = IMG
+
+    def toCV2_fromTOPIC(self):
+        IMG_CV2 = self.BRIDGE.imgmsg_to_cv2(self.IMAGE, "passthrough")
+        return(IMG_CV2)
 
 # =========================================== #
 # FUNCTION -> GET image (CV2 format) from ROS 2 topic:
