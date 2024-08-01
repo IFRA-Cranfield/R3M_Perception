@@ -15,9 +15,12 @@ from skimage import io as skimage_io
 from r3m_perception_data.srv import MegaPose
 from r3m_perception_data.msg import OneShotResult
 
-# IMPORT -> IMG conversion functions:
-PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'python')
-sys.path.append(PATH)
+# R3M Perception PATH:
+PATH_P = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception')
+
+# Import FUNCTIONS:
+PATH_F = PATH_P + "/python/functions"
+sys.path.append(PATH_F)
 from convertIMG import toROS2IMG_fromTOPIC, toROS2IMG_fromCV2
 
 # Create NODE:

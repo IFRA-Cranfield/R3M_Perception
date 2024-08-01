@@ -147,13 +147,13 @@ def main(args=None):
     # 1. DEFINE INPUT VARIABLES to IMG:
     OBJECTS = ['adapter_plate_triangular']
     
-    CAMERA = "camera_ze"
-    #CAMERA = "lenovoFHD_gazebo"
+    #CAMERA = "camera_ze"
+    CAMERA = "lenovoFHD_gazebo"
     
     #IMGTopic = "camera/image_raw"
     #IMG = toROS2IMG_fromTOPIC(IMGTopic)
     img_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'pictures')
-    img_PATH = img_PATH + "/test001.png"
+    img_PATH = img_PATH + "/adapter_plate_triangular.png"
     img = skimage_io.imread(img_PATH)
     IMG = toROS2IMG_fromCV2(img)
     
@@ -161,7 +161,7 @@ def main(args=None):
     OSD_RES = r3mPERCEPTION.EXECUTE_OSD(IMG, CAMERA, OBJECTS)
     
     # 3. EXECUTE M6D:
-    M6D_RES = r3mPERCEPTION.EXECUTE_M6D(IMG, CAMERA, OSD_RES.result)
+    #M6D_RES = r3mPERCEPTION.EXECUTE_M6D(IMG, CAMERA, OSD_RES.result)
     
     rclpy.shutdown()
 

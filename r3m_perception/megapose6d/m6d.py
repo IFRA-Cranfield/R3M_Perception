@@ -195,8 +195,6 @@ class MEGAPOSE_CLASS():
 
     def EXECUTE_FI(self, frame, CAMERA, BB):
         
-        print("AA")
-        
         self.cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'mesh')
         camera_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'config', CAMERA)
         
@@ -238,13 +236,9 @@ class MEGAPOSE_CLASS():
         self.detections = load_detections_zero_multi(zero_shot_bbox=self.bbox_extended)
         self.observation = ObservationTensor.from_numpy(self.rgb, depth, self.camera_data.K).cuda()
 
-        print("BB")
-
         self.output, _ = self.pose_estimator.run_inference_pipeline(
             self.observation, detections=self.detections, **self.model_info["inference_parameters"]
         )
-        
-        print("CC")
         
         print(self.output)
         

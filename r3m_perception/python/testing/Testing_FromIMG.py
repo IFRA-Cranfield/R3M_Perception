@@ -184,12 +184,12 @@ class R3MP():
 
         print("========================================================")
         print("One-Shot Detection + Megapose6D Execution requested for:")
-        print("  - Camera Type: " + self.CAMERAType)
+        print("  - Camera Type: " + self.CAMERA)
         print("  - IMAGE: " + imgPATH)
         print("  - Objects to be detected: " + str(self.OBJECTS))
         print()
         
-        print("STEP 1: Getting ObjectPose from Gazebo...")
+        print("STEP 1: Getting image from PerceptionTesting folder...")
 
         # Convert cv2 image to ROS 2 image:
         IMG_cv2 = cv2.imread(imgPATH)
@@ -200,7 +200,7 @@ class R3MP():
         print("STEP 2: Executing One-Shot Detection...")
         
         # Execute -> OSD:
-        OSD_RES = self.Perception.EXECUTE_OSD(IMG_ROS2, self.CAMERAType, self.OBJECTS)
+        OSD_RES = self.Perception.EXECUTE_OSD(IMG_ROS2, self.CAMERA, self.OBJECTS)
         
         if OSD_RES.success == False:
             print("STEP 2: Completed -> OSD Execution Failed.")
@@ -219,7 +219,7 @@ class R3MP():
         print("STEP 3: Executing Megapose6D...")
             
         # Execute -> M6D:
-        M6D_RES = self.Perception.EXECUTE_M6D(IMG_ROS2, self.CAMERAType, OSD_RES.result)
+        M6D_RES = self.Perception.EXECUTE_M6D(IMG_ROS2, self.CAMERA, OSD_RES.result)
         
         print("STEP 3: Completed. Result:")
         print("")
@@ -242,7 +242,10 @@ class R3MP():
 
             testINFO[str(i)][x.objectname]["Perception"] = POSE
 
-            print("R3M Perception estimation  of object -> " + x["Name"] + " for image -> " + imgPATH + " recorded.")
+            print("R3M Perception estimation  of object -> " + x.objectname + " for image -> " + imgPATH + " recorded.")
+            
+        with open(self.yamlNAME, 'w') as F:
+            yaml.dump(testINFO, F)
     
 # ========================================================================================= #
 # ========================================= MAIN ========================================== #

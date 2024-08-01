@@ -127,12 +127,12 @@ class OSD_CLASS():
             self.figName = []
 
             for i, folder in enumerate(self.folders1, start=1):
-                print(f"{i}. {folder}")
-                # Uncomment the line below to run the render script
-                os.system(f"python3 ~/dev_ws/src/R3M_Perception/r3m_perception/oneshotdetection/render.py {folder}")
-                print(f"{folder} rendered")
-            
                 self.figName.append(self.img_PATH + "/OSD_Input_" + folder + ".png")
+                
+                # RENDER -> COMMENTED:
+                # print(f"{i}. {folder}")
+                # os.system(f"python3 ~/dev_ws/src/R3M_Perception/r3m_perception/oneshotdetection/render.py {folder}")
+                # print(f"{folder} rendered")
             
             source_images = []
             for figName in self.figName:

@@ -17,9 +17,12 @@ from r3m_perception_data.msg import OneShotResult
 # IMPORT OSD CLASS:
 from osd import OSD_CLASS
 
-# IMPORT -> IMG conversion functions:
-PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'python')
-sys.path.append(PATH)
+# R3M Perception PATH:
+PATH_P = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception')
+
+# Import FUNCTIONS:
+PATH_F = PATH_P + "/python/functions"
+sys.path.append(PATH_F)
 from convertIMG import toCV2_fromROS2IMG
 
 # Create NODE:

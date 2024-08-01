@@ -48,6 +48,7 @@ install(PROGRAMS
   megapose6d/M6D_client.py
 
   python/ROS2_client.py
+  python/perception.py
 
   DESTINATION lib/${PROJECT_NAME} 
 )

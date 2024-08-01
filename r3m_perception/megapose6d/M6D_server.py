@@ -17,9 +17,12 @@ from objectpose_msgs.msg import ObjectPose
 # IMPORT M6D CLASS:
 from m6d import MEGAPOSE_CLASS
 
-# IMPORT -> IMG conversion functions:
-PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'python')
-sys.path.append(PATH)
+# R3M Perception PATH:
+PATH_P = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception')
+
+# Import FUNCTIONS:
+PATH_F = PATH_P + "/python/functions"
+sys.path.append(PATH_F)
 from convertIMG import toCV2_fromROS2IMG
 
 # Create NODE:
@@ -87,11 +90,11 @@ class serviceServer(Node):
 def main(args=None):
     
     # Initialise NODE:
-    rclpy.init(args=args)
+    rclpy.init(args=None)
     r3mNode = serviceServer()
     
     r3mNode.get_logger().info("==================================================================================================")
-    r3mNode.get_logger().info("[R3M Perception - M6DServer]: /R3MPerception_OSD ROS2 Service Server running, ROS2 node generated.")
+    r3mNode.get_logger().info("[R3M Perception - M6DServer]: /R3MPerception_M6D ROS2 Service Server running, ROS2 node generated.")
     r3mNode.get_logger().info("==================================================================================================")
 
     # Spin SERVICE:

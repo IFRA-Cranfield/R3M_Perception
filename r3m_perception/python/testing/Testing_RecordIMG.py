@@ -147,9 +147,9 @@ def main(args=None):
 
     # INPUT VARIABLES:
     FOLDER = os.path.join(os.path.expanduser('~'), 'PerceptionTesting')
-    TESTName = "Test001"
+    TESTName = "Test002"
     ITERATIONS = 10
-    OBJECTS = ['adapter_plate_triangular', 'bracket_big', 'thread', 'star']
+    OBJECTS = ['adapter_plate_square']
     CAMERA = "lenovoFHD_gazebo"
     
     PATH = FOLDER + "/" + TESTName

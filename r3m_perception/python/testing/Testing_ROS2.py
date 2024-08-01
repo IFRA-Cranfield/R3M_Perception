@@ -200,7 +200,6 @@ class R3MP():
         # Get ObjectPose for future comparison:
         obj = OBJECT(OBJList)
         ObjectPoseList = obj.GetObjectPose()
-        print("AA")
         del obj
         
         print("STEP 1: Completed.")
