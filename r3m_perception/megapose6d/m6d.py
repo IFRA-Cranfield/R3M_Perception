@@ -252,7 +252,8 @@ class MEGAPOSE_CLASS():
         M6D_RESULT = []
         
         for pose, label in zip(poses, labels):
-            print('Two: ', Transform(pose))
+            
+            print('First Inference result: ', Transform(pose))
             self.initial_message_received = True
             
             MSG = Trans(0.0,0.0,0.0,0.0,0.0,0.0)
@@ -301,14 +302,15 @@ class MEGAPOSE_CLASS():
         M6D_RESULT = []
         
         for pose, label in zip(poses, labels):
-            print('Two: ', Transform(poses[0]))
+            
+            print('Real Time Inference result: ', Transform(pose))
             #self.save_predictions(self.example_dir, self.output)
             #self.my_visual(self.camera_data)
             MSG = Trans(0.0,0.0,0.0,0.0,0.0,0.0)
             transformation1 = np.array(self.t1)
             transformation2 = np.array(self.t2)
             # MSG.x, MSG.y, MSG.z, MSG.row, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(Transform(poses[0]).matrix, transformation))
-            MSG.x, MSG.y, MSG.z, MSG.roll, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(transformation1,np.matmul(transformation2,Transform(poses[0]).matrix)))
+            MSG.x, MSG.y, MSG.z, MSG.roll, MSG.pitch, MSG.yaw = self.matrix_to_xyzrpy(np.matmul(transformation1,np.matmul(transformation2,Transform(pose).matrix)))
             
             ORIENTATION = self.EulerToQuat(MSG.roll, MSG.pitch, MSG.yaw)
             

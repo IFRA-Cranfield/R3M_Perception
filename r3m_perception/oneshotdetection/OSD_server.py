@@ -30,12 +30,12 @@ class serviceServer(Node):
     
     def __init__(self):
         
+        # Initialise: OSD Class:
+        self.OSD = OSD_CLASS()
+        
         # Initialise -> ROS 2 Service:
         super().__init__('r3m_OSDServer')
         self.srv = self.create_service(OneShotDet, "R3MPerception_OSD", self.EXECUTE_OSD)
-        
-        # Initialise: OSD Class:
-        self.OSD = OSD_CLASS()
     
     def EXECUTE_OSD(self, request, response):
         
@@ -79,9 +79,13 @@ def main(args=None):
     rclpy.init(args=args)
     r3mNode = serviceServer()
     
-    r3mNode.get_logger().info("==================================================================================================")
-    r3mNode.get_logger().info("[R3M Perception - OSDServer]: /R3MPerception_OSD ROS2 Service Server running, ROS2 node generated.")
-    r3mNode.get_logger().info("==================================================================================================")
+    print("")
+    
+    print("==================================================================================================")
+    print("[R3M Perception - OSDServer]: /R3MPerception_OSD ROS2 Service Server running, ROS2 node generated.")
+    print("==================================================================================================")
+
+    print("")
 
     # Spin SERVICE:
     rclpy.spin(r3mNode)
