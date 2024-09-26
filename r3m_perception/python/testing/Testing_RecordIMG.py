@@ -28,6 +28,8 @@ from gazebo_msgs.srv import SpawnEntity
 from gazebo_msgs.srv import DeleteEntity
 from std_srvs.srv import Empty
 
+import math
+
 # R3M Perception PATH:
 PATH_P = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception')
 
@@ -100,6 +102,21 @@ class EntityClient(Node):
         self.req_DELETE = DeleteEntity.Request()
         self.req_EMPTY = Empty.Request()
 
+    def euler_to_quaternion(self, yaw, pitch, roll):
+        cy = math.cos(yaw * 0.5)
+        sy = math.sin(yaw * 0.5)
+        cp = math.cos(pitch * 0.5)
+        sp = math.sin(pitch * 0.5)
+        cr = math.cos(roll * 0.5)
+        sr = math.sin(roll * 0.5)
+
+        w = cr * cp * cy + sr * sp * sy
+        x = sr * cp * cy - cr * sp * sy
+        y = cr * sp * cy + sr * cp * sy
+        z = cr * cp * sy - sr * sp * cy
+
+        return w, x, y, z
+
     def spawn_REQUEST(self, ObjectList):
         
         for x in ObjectList:
@@ -114,6 +131,8 @@ class EntityClient(Node):
             self.req_SPAWN.initial_pose.position.x = random.uniform(0.5, 0.7)
             self.req_SPAWN.initial_pose.position.y = random.uniform(0.1, 0.9)
             self.req_SPAWN.initial_pose.position.z = 0.95
+            self.yaw = random.uniform(0.0,6.28)
+            self.req_SPAWN.initial_pose.orientation.w, self.req_SPAWN.initial_pose.orientation.x, self.req_SPAWN.initial_pose.orientation.y, self.req_SPAWN.initial_pose.orientation.z = self.euler_to_quaternion(self.yaw, 0, 0)
             # Add here -> Random orientation.
 
             # Assign RESULT value (future):

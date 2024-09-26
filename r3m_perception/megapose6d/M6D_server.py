@@ -64,7 +64,7 @@ class serviceServer(Node):
             INPUT["Result"].append(INP)
         
         # Execute -> M6D:
-        M6D_RES = self.M6D.EXECUTE_FI(IMG_CV2, request.camera, INPUT)
+        M6D_RES = self.M6D.EXECUTE_FI(IMG_CV2, request.camera, INPUT, request.idx)
             
         # Get RESPONSE:
         for x in M6D_RES:

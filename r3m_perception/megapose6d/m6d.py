@@ -118,7 +118,7 @@ class MEGAPOSE_CLASS():
         return x, y, z, roll, pitch, yaw
 
 
-    def my_visual(self,camera_data_v):
+    def my_visual(self,camera_data_v,idx):
         camera_data_v.TWC = Transform(np.eye(4))
         object_datas = self.load_object_data(Path(self.example_dir) / 'm6d_execution' / "outputs" / "object_data.json")
 
@@ -147,7 +147,7 @@ class MEGAPOSE_CLASS():
         )["img"]
         fig_contour_overlay = plotter.plot_image(contour_overlay)
         
-        export_png(fig_contour_overlay, filename=self.vis_dir / f"contour_overlay.png")
+        export_png(fig_contour_overlay, filename=self.vis_dir / f"contour_overlay{idx}.png")
 
 
     def load_object_data(self,data_path: Path) -> List[ObjectData]:
@@ -193,7 +193,7 @@ class MEGAPOSE_CLASS():
         logger.info(f"Wrote predictions: {output_fn}")
         return
 
-    def EXECUTE_FI(self, frame, CAMERA, BB):
+    def EXECUTE_FI(self, frame, CAMERA, BB, idx):
         
         self.cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'mesh')
         camera_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'config', CAMERA)
@@ -247,7 +247,7 @@ class MEGAPOSE_CLASS():
         print(poses)
         
         self.save_predictions(self.example_dir, self.output)
-        self.my_visual(self.camera_data)
+        self.my_visual(self.camera_data,idx)
         
         M6D_RESULT = []
         

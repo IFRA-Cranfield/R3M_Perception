@@ -53,13 +53,14 @@ class OSDClient(Node):
         self.req = OneShotDet.Request()
         self.get_logger().info("[R3M Perception - OSDClient]: /R3MPerception_OSD ROS2.0 SERVICE detected!")
 
-    def EXECUTE_OSD(self, IMG, CADList, CAM):
+    def EXECUTE_OSD(self, IMG, CADList, CAM,idx):
         
         self.get_logger().info("[R3M Perception - OSDClient]: Executing OSD Request...")
 
         self.req.cadlist = CADList
         self.req.camera = CAM
         self.req.img = IMG
+        self.req.idx = idx
         
         self.future = self.cli.call_async(self.req)    
          
@@ -76,13 +77,14 @@ class M6DClient(Node):
         self.req = MegaPose.Request()
         self.get_logger().info("[R3M Perception - M6DClient]: /R3MPerception_M6D ROS2.0 SERVICE detected!")
 
-    def EXECUTE_M6D(self, IMG, CAM, INPUT):
+    def EXECUTE_M6D(self, IMG, CAM, INPUT, idx):
         
         self.get_logger().info("[R3M Perception - M6DClient]: Executing M6D Request...")
         
         self.req.input = INPUT
         self.req.camera = CAM
         self.req.img = IMG
+        self.req.idx = idx
         
         self.future = self.cli.call_async(self.req)
 
@@ -94,9 +96,9 @@ class R3MPerceptionClient():
         self.OSDNode = OSDClient()
         self.M6DNode = M6DClient()
         
-    def EXECUTE_OSD(self, IMG, CAMERA, OBJECTS):
+    def EXECUTE_OSD(self, IMG, CAMERA, OBJECTS,idx):
         
-        self.OSDNode.EXECUTE_OSD(IMG, OBJECTS, CAMERA)
+        self.OSDNode.EXECUTE_OSD(IMG, OBJECTS, CAMERA, idx)
 
         while rclpy.ok():
             rclpy.spin_once(self.OSDNode)
@@ -124,9 +126,9 @@ class R3MPerceptionClient():
             
         return(response)
     
-    def EXECUTE_M6D(self, IMG, CAMERA, INPUT_M6D):
+    def EXECUTE_M6D(self, IMG, CAMERA, INPUT_M6D, idx):
         
-        self.M6DNode.EXECUTE_M6D(IMG, CAMERA, INPUT_M6D)
+        self.M6DNode.EXECUTE_M6D(IMG, CAMERA, INPUT_M6D, idx)
 
         while rclpy.ok():
             rclpy.spin_once(self.M6DNode)
@@ -175,12 +177,12 @@ class R3MP():
         print("STEP 0: Completed.")
         print("")
 
-    def EXECUTE_OSDM6D(self, i):
+    def EXECUTE_OSDM6D(self, idx):
 
         RESULT = {}
         RESULT["Success"] = False
 
-        imgPATH = self.PATH + "/" + str(i) + ".png"
+        imgPATH = self.PATH + "/" + str(idx) + ".png"
 
         print("========================================================")
         print("One-Shot Detection + Megapose6D Execution requested for:")
@@ -200,7 +202,7 @@ class R3MP():
         print("STEP 2: Executing One-Shot Detection...")
         
         # Execute -> OSD:
-        OSD_RES = self.Perception.EXECUTE_OSD(IMG_ROS2, self.CAMERA, self.OBJECTS)
+        OSD_RES = self.Perception.EXECUTE_OSD(IMG_ROS2, self.CAMERA, self.OBJECTS, idx)
         
         if OSD_RES.success == False:
             print("STEP 2: Completed -> OSD Execution Failed.")
@@ -219,7 +221,7 @@ class R3MP():
         print("STEP 3: Executing Megapose6D...")
             
         # Execute -> M6D:
-        M6D_RES = self.Perception.EXECUTE_M6D(IMG_ROS2, self.CAMERA, OSD_RES.result)
+        M6D_RES = self.Perception.EXECUTE_M6D(IMG_ROS2, self.CAMERA, OSD_RES.result, idx)
         
         print("STEP 3: Completed. Result:")
         print("")
@@ -240,7 +242,7 @@ class R3MP():
             POSE["qz"] = x.qz
             POSE["qw"] = x.qw
 
-            testINFO[str(i)][x.objectname]["Perception"] = POSE
+            testINFO[str(idx)][x.objectname]["Perception"] = POSE
 
             print("R3M Perception estimation  of object -> " + x.objectname + " for image -> " + imgPATH + " recorded.")
             

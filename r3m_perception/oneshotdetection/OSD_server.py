@@ -46,7 +46,7 @@ class serviceServer(Node):
         IMG_CV2 = toCV2_fromROS2IMG(request.img)
         
         # Execute -> OSD:
-        OSD_RES = self.OSD.EXECUTE_OSD(IMG_CV2, request.cadlist, request.camera)
+        OSD_RES = self.OSD.EXECUTE_OSD(IMG_CV2, request.cadlist, request.camera, request.idx)
         
         if OSD_RES["Success"] == False:
             response.success = False

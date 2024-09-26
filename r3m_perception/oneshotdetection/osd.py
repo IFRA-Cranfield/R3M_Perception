@@ -87,7 +87,7 @@ class OSD_CLASS():
             anti_aliasing=True,
         )
 
-    def EXECUTE_OSD(self, inputIMG, cad_list, CAMERA):
+    def EXECUTE_OSD(self, inputIMG, cad_list, CAMERA,idx):
         
         self.cad_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'mesh')
         self.osd_PATH = os.path.join(os.path.expanduser('~'), 'dev_ws', 'src', 'R3M_Perception', 'r3m_perception', 'cad', 'osd_execution')
@@ -332,7 +332,7 @@ class OSD_CLASS():
                     RES['bry'] = BRy
                     RESULT.append(RES)
 
-            outputName = self.osd_PATH + "/OSD_RESULT.png"
+            outputName = self.osd_PATH + "/OSD_RESULT"+str(idx)+".png"
             fig.savefig(outputName)
             print("")
             print("")
