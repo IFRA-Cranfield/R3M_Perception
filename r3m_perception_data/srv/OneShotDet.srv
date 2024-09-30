@@ -1,6 +1,7 @@
 string[] cadlist
 string camera
 sensor_msgs/Image img
+int32 idx
 ---
 bool success
 OneShotResult[] result

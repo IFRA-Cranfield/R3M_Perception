@@ -182,7 +182,7 @@ class R3MP():
         RESULT = {}
         RESULT["Success"] = False
 
-        imgPATH = self.PATH + "/" + str(idx) + ".png"
+        imgPATH = self.PATH + "/" + str(idx) + "_mesh_overlay.png"
 
         print("========================================================")
         print("One-Shot Detection + Megapose6D Execution requested for:")
@@ -265,7 +265,7 @@ def main(args=None):
 
     # INPUT VARIABLES:
     FOLDER = os.path.join(os.path.expanduser('~'), 'PerceptionTesting')
-    TESTName = "Test001"
+    TESTName = "blockage_80_percent"
     
     PATH = FOLDER + "/" + TESTName
     if not os.path.exists(PATH):
