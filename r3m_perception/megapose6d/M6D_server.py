@@ -152,7 +152,7 @@ class RTINode(Node):
 
         for x in ObjectList:
             
-            TopicName = "/" + x + "/ObjectPose/R3MPerception"
+            TopicName = "/" + x + "/ObjectPoseEstimation"
             self.PUBList[x] = self.create_publisher(ObjectPose, TopicName, 10)
             
     def RTI_execute(self):
