@@ -90,7 +90,7 @@ class serviceServer(Node):
     def EXECUTE_RTI(self, request, response):
         
         print("")
-        print("[M6D-RTI] - FI Execution requested, executing...")
+        print("[M6D-RTI] - RTI Execution requested, executing...")
         
         # CAMERATopic:
         CAMERATopic = request.camera + "/image_raw"
@@ -123,7 +123,7 @@ class serviceServer(Node):
             INPUT["Result"].append(INP)
         
         # Execute -> M6D:
-        M6D_RES = self.M6D.EXECUTE_FI(IMG_CV2, request.camera, INPUT)
+        M6D_RES = self.M6D.EXECUTE_FI(IMG_CV2, request.camera, INPUT, request.idx)
         
         print("")
         print("[M6D-RTI] - FI Execution finished, result:")
