@@ -42,7 +42,7 @@ python3 -m pip install pin
 12. Install Perception setup:
 ```
 cd ~/dev_ws/src
-git clone https://github.com/megapose6d/megapose6d.git](https://github.com/YueYaoUoS/R3M_Perception_setup.git
+git clone https://github.com/megapose6d/megapose6d.git
 cd ~/dev_ws/src/R3M_Perception_setup
 cd megapose6d && git submodule update --init
 python3 -m megapose.scripts.download --megapose_models
