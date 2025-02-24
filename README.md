@@ -23,16 +23,9 @@ nvidia-smi
 
 8. Install ROS2 Humble following: [ROS2 Humble Tutorials - Installation](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 
-8. Install Pytorch: 
+9. Install Pytorch: 
 ```
 pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
-```
-
-9. Git clone Megapose6d:
-```
-git clone https://github.com/megapose6d/megapose6d.git
-cd megapose6d && git submodule update --init
-
 ```
 
 10. Install Python packages:
@@ -46,61 +39,32 @@ sudo apt install rclone
 python3 -m pip install pin
 ```
 
-12. Modify the config file:
-In `line 44` of `directory-to-megapose6d/src/megapose/config.py`, change to `PYTHON_BIN_PATH = "/usr/bin/python3"`
-
-14. Download pretrained Megapose models:
+12. Install Perception setup:
 ```
-cd ~/megapose6d/src
+cd ~/dev_ws/src
+git clone https://github.com/megapose6d/megapose6d.git](https://github.com/YueYaoUoS/R3M_Perception_setup.git
+cd ~/dev_ws/src/R3M_Perception_setup
+cd megapose6d && git submodule update --init
 python3 -m megapose.scripts.download --megapose_models
-```
-
-14. Download example data:
-```
 python3 -m megapose.scripts.download --example_data
-```
-
-15. Testrun the Megapose6d:
-```
-python3 -m megapose.scripts.run_inference_on_example barbecue-sauce --run-inference
-python3 -m megapose.scripts.run_inference_on_example barbecue-sauce --vis-detections
-```
-
-16. Build customized data:
-Move the `test-lam5` file to `directory-to-megapose6d/local_data/examples`
-
-17. Git clone OWL_ViT:
-```
-git clone https://github.com/google-research/scenic.git
+cd ~/dev_ws/src/R3M_Perception_setup
 cd ~/scenic
-```
-Delect `@master` in line 83 in the setup.py in ~/scenic.
-```
 python -m pip install -vq .
 python -m pip install -r scenic/projects/owl_vit/requirements.txt
 pip install --upgrade "jax[cuda]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
-```
-
-18. Install big_vision:
-```
-mkdir /big_vision
-git clone https://github.com/google-research/big_vision.git /big_vision
 python -m pip install -r /big_vision/big_vision/requirements.txt
 ```
 
-19. Install ezdxf:
+13. Install ezdxf:
 ```
 pip install ezdxf
 ```
 
-20. Install R3M_Cell following: https://github.com/R3M-UK/R3M_Cell
+14. Install R3M_Cell following: https://github.com/R3M-UK/R3M_Cell
     
 
 ### Installation
-* Download the package in your ROS2 workspace:
 ```
-cd ~/dev_ws/src
-git clone https://github.com/YueYaoUoS/r3m_perception.git
 cd ~/dev_ws
 colcon build --packages-select r3m_perception
 ```
