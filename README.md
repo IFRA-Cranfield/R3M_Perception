@@ -42,7 +42,7 @@ python3 -m pip install pin
 12. Install Perception setup:
 ```
 cd ~/dev_ws/src
-git clone https://github.com/megapose6d/megapose6d.git
+git clone https://github.com/YueYaoUoS/R3M_Perception_setup.git
 cd ~/dev_ws/src/R3M_Perception_setup
 cd megapose6d && git submodule update --init
 python3 -m megapose.scripts.download --megapose_models
@@ -98,6 +98,8 @@ Mikel Bueno Viso - Mikel.Bueno-Viso@cranfield.ac.uk
 
 ## Version History
 
+* 1.1
+   * Multiple changes to R3M Perception.
 * 0.5
    * Switched the methodology to OWL_ViT & megapose6d.(29.11.2023)
 * 0.4
