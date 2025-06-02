@@ -1,6 +1,6 @@
 # r3m_perception
 R3M perception ROS2 package.
-Now includes the Lamination Sheet 6D pose detection ROS2 package and Logitech C270 webcam ROS2 interface.
+It now includes the Lamination Sheet 6D pose detection ROS2 package and Logitech C270 webcam ROS2 interface.
 
 ## Getting Started
 
