@@ -72,7 +72,7 @@
 
   <br />
 
-  <h1 align="center">R3M-APG (Automated Program Generation)</h1>
+  <h1 align="center">R3M-Perception (Automated Program Generation)</h1>
 
   <h2 align="center">Reconfigurable Robotics for Responsive Manufacture</h2>
 
