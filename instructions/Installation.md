@@ -69,26 +69,6 @@ cd ~/dev_ws
 colcon build --packages-select r3m_perception
 ```
 
-### Excution
-1. Run the simulation:
-```
-ros2 launch r3mcell_moveit2 r3mcell_moveit2.launch.py
-```
-
-2. Run the one-shot action server:
-```
-ros2 run r3m_perception oneshot.py
-```
-
-3. Run the perception node:
-```
-ros2 run r3m_perception perception_test.py
-```
-
-4. Visualize the pose:
-```
-ros2 topic echo /position_TOPIC
-```
 
 ## Authors
 
