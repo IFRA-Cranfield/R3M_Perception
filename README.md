@@ -122,15 +122,23 @@ ROS 2 has been the primary enabler for the reconfigurability and adaptability of
 
 The R3M Project is an EPSRC-funded UK research initiative (EP/V051180/1) focused on Reconfigurable Robotics for Responsive Manufacture. Led by Cranfield University, it is a collaborative effort involving Loughborough University, the University of Sheffield, and AMRC-Sheffield. Together, these institutions are working to develop next-generation, adaptable manufacturing systems that can dynamically respond to changing production needs while improving efficiency and reducing costs.
 
-### R3M-APG Repository
+### R3M-Perception Repository
 
-The R3M-APG repository contains all the components required to execute, manage, and integrate the Automatic Program Generation (APG) module within the R3M Platform. It forms the core of the autonomous decision-making layer of the R3M architecture, enabling the generation and execution of robotic programs through reinforcement learning (RL) agents and skill-based orchestration. This repository bridges the gap between data-driven task generation and the real or simulated robotic environments of the R3M system.
+The R3M-Perception repository provides the complete perception framework of the R3M Platform, integrating advanced vision-based AI models for object detection and 6-DoF pose estimation directly from CAD models. It forms the foundation of the environment understanding layer in the R3M architecture, enabling the autonomous recognition, localization, and tracking of components in both real and simulated manufacturing scenarios.
 
-The repository is structured around two main ROS 2 packages. The r3m_data package defines the ROS 2 communication mechanisms that enable all APG-related operations, including the .msg and .srv interfaces used across Topics and Services to manage data flow and task execution within the R3M framework. The r3m_apg package, on the other hand, includes the core functionality of the APG module: R3M use-case definitions, skill recipes for different manufacturing tasks, and MATLAB wrappers for integrating the RL-based APG agents during both training and execution phases.
+At its core, R3M-Perception employs two key modules: OWL-ViT and MegaPose6D.
 
-At the heart of r3m_apg lies the R3M Orchestrator, a central module responsible for managing the execution environment and coordinating between different system layers. It oversees skill and program execution, RL agent training, and environment management across simulation and real-robot scenarios. The orchestrator also handles perception-driven task execution, ensuring adaptive and context-aware program generation.
+OWL-ViT serves as the one-shot object detector, allowing the system to identify novel components from textual or visual prompts without the need for task-specific retraining.
 
-By consolidating these elements, the R3M-APG repository provides a robust and scalable foundation for autonomous program generation within the R3M architecture. It enables seamless integration between learning-based decision-making, robotic control, and the communication backbone of the platform—supporting the project’s overarching goal of achieving reconfigurable, intelligent, and fully autonomous manufacturing systems.
+MegaPose6D, in turn, performs high-precision 6-DoF pose estimation by leveraging CAD geometry, bridging the gap between digital design models and physical perception data. This combination enables flexible, scalable deployment across different use cases and robotic platforms.
+
+The repository is organized into multiple ROS 2 packages to ensure modularity and interoperability:
+
+The r3m_perception_data package defines all message and service interfaces (.msg, .srv) that facilitate perception-driven communication between the vision stack, the robotic execution layer, and higher-level decision modules such as APG.
+
+The r3m_perception package encapsulates the full perception pipeline, including detection inference, CAD-based pose estimation, and scene reconstruction utilities. It also provides configuration templates for both real-world and simulated environments, ensuring reproducible setup and calibration across sensors and robots.
+
+By consolidating state-of-the-art vision models with a robust ROS 2 communication backbone, R3M-Perception delivers a scalable and extensible foundation for perception in reconfigurable manufacturing. It enables seamless integration between high-level AI reasoning, robotic control, and environment understanding—advancing the R3M vision of fully autonomous, intelligent, and perception-aware robotic systems.
 
 ### ros2_SimRealRobotControl Repository
 
